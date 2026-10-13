@@ -1,0 +1,170 @@
+import React from 'react';
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Redirect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../services/auth/useAuth';
+import { LoadingIndicator } from '../../components/LoadingIndicator';
+import { colors, radius, spacing, typography } from '../../components/design/theme';
+
+export default function LoginScreen() {
+  const { isAuthenticated, isLoading, signIn, error } = useAuth();
+
+  if (isLoading) {
+    return <LoadingIndicator message="Connecting to Google Drive..." fullScreen />;
+  }
+
+  if (isAuthenticated) {
+    return <Redirect href="/(tabs)/" />;
+  }
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.logoArea}>
+          <View style={styles.logoCircle}>
+            <Ionicons name="cloud-outline" size={52} color={colors.accent} />
+          </View>
+          <Text style={styles.appName}>Personal Storage Hub</Text>
+          <Text style={styles.tagline}>Your central hub for personal notes & files</Text>
+        </View>
+
+        <View style={styles.features}>
+          {[
+            { icon: 'document-text-outline', label: 'Write & store plain text notes (.txt)' },
+            { icon: 'cloud-upload-outline', label: 'Upload PDFs, Word docs, photos & videos' },
+            { icon: 'folder-outline', label: 'Organized inside dedicated Drive folders' },
+            { icon: 'search-outline', label: 'Instant search, preview, and trash management' },
+            { icon: 'shield-checkmark-outline', label: 'Private & direct: no external database' },
+          ].map((f) => (
+            <View key={f.icon} style={styles.featureRow}>
+              <View style={styles.featureIcon}>
+                <Ionicons name={f.icon as any} size={20} color={colors.accent} />
+              </View>
+              <Text style={styles.featureText}>{f.label}</Text>
+            </View>
+          ))}
+        </View>
+
+        {error ? (
+          <View style={styles.errorBox}>
+            <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
+
+        <TouchableOpacity
+          style={styles.signInBtn}
+          onPress={signIn}
+          activeOpacity={0.85}
+          disabled={isLoading}
+        >
+          <View style={styles.googleIcon}>
+            <Text style={styles.googleG}>G</Text>
+          </View>
+          <Text style={styles.signInText}>Connect Google Drive</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.disclaimer}>
+          Personal Storage Hub requests only the minimal drive.file scope needed to manage its own folder. It never touches or modifies any other files in your Drive.
+        </Text>
+
+        {Platform.OS !== 'web' ? (
+          <Text style={styles.platformNote}>
+            On mobile, run via an Expo development build for custom OAuth redirect handling. On web, authentication connects directly or via the local server proxy.
+          </Text>
+        ) : null}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
+  scroll: {
+    flexGrow: 1,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xxl,
+    gap: spacing.xl,
+    justifyContent: 'center',
+  },
+  logoArea: { alignItems: 'center', gap: spacing.md },
+  logoCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: radius.full,
+    backgroundColor: colors.accentLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  appName: { ...typography.h1, textAlign: 'center' },
+  tagline: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },
+  features: { gap: spacing.md },
+  featureRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  featureIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
+    backgroundColor: colors.accentLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  featureText: { ...typography.body, flex: 1 },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.dangerLight,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  errorText: { ...typography.bodySmall, color: colors.danger, flex: 1 },
+  signInBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    paddingVertical: spacing.base,
+    paddingHorizontal: spacing.xl,
+  },
+  googleIcon: {
+    width: 26,
+    height: 26,
+    borderRadius: radius.full,
+    backgroundColor: '#4285F4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleG: { color: '#FFF', fontSize: 15, fontWeight: '700' },
+  signInText: { ...typography.button, color: colors.textPrimary },
+  disclaimer: {
+    ...typography.bodySmall,
+    textAlign: 'center',
+    color: colors.textDisabled,
+    lineHeight: 18,
+  },
+  platformNote: {
+    ...typography.caption,
+    textAlign: 'center',
+    color: colors.warning,
+    backgroundColor: colors.warningLight,
+    borderRadius: radius.md,
+    padding: spacing.sm,
+    lineHeight: 17,
+  },
+});
