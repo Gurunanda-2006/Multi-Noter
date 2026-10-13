@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
@@ -33,7 +34,11 @@ export default function LoginScreen() {
       >
         <View style={styles.logoArea}>
           <View style={styles.logoCircle}>
-            <Ionicons name="cloud-outline" size={48} color={colors.accent} />
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.logoImage}
+              resizeMode="cover"
+            />
           </View>
           <Text style={styles.appName}>Personal Storage Hub</Text>
           <Text style={styles.tagline}>Your central hub for personal notes & files</Text>
@@ -104,11 +109,17 @@ const styles = StyleSheet.create({
     height: 96,
     borderRadius: radius.full,
     backgroundColor: 'rgba(52, 211, 153, 0.12)',
-    borderWidth: 1,
-    borderColor: 'rgba(52, 211, 153, 0.3)',
+    borderWidth: 2,
+    borderColor: 'rgba(52, 211, 153, 0.4)',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
     ...shadow.glow,
+  },
+  logoImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: radius.full,
   },
   appName: { ...typography.h1, textAlign: 'center' },
   tagline: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },

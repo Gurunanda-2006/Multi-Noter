@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import {
+  Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -93,7 +94,14 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.appName}>Personal Storage Hub</Text>
+          <View style={styles.appNameRow}>
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.headerLogo}
+              resizeMode="cover"
+            />
+            <Text style={styles.appName}>Personal Storage Hub</Text>
+          </View>
           <View style={styles.driveStatus}>
             <View style={[styles.dot, isReady ? styles.dotGreen : styles.dotOrange]} />
             <Text style={styles.driveStatusText}>
@@ -273,8 +281,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
-  headerLeft: { gap: 2, flex: 1 },
-  appName: { ...typography.h2 },
+  headerLeft: { gap: 4, flex: 1 },
+  appNameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  headerLogo: {
+    width: 28,
+    height: 28,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(52, 211, 153, 0.4)',
+  },
+  appName: { ...typography.h2, fontSize: 18 },
   driveStatus: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   dot: { width: 8, height: 8, borderRadius: 4 },
   dotGreen: { backgroundColor: colors.success },
