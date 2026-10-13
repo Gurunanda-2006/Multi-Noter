@@ -183,6 +183,14 @@ export async function getFileContent(token: string, fileId: string): Promise<str
   return res.text();
 }
 
+export async function getFileBlob(token: string, fileId: string): Promise<Blob> {
+  const res = await fetch(`${DRIVE_BASE}/files/${fileId}?alt=media`, {
+    headers: headers(token),
+  });
+  await checkResponse(res);
+  return res.blob();
+}
+
 export async function getFileMetadata(token: string, fileId: string): Promise<DriveFile> {
   const fields = 'id,name,mimeType,size,createdTime,modifiedTime,parents,trashed,webViewLink,webContentLink,thumbnailLink,appProperties,description';
   const res = await fetch(`${DRIVE_BASE}/files/${fileId}?fields=${encodeURIComponent(fields)}`, {

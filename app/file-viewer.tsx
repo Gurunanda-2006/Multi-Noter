@@ -20,6 +20,7 @@ import {
   moveToTrash,
   permanentlyDeleteFile,
 } from '../services/google-drive/driveApi';
+import { downloadFileToDevice } from '../services/files/downloadService';
 import { categoryIcon, categoryLabel } from '../utils/mime';
 import { formatFileSize, formatDate } from '../utils/filename';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -71,14 +72,19 @@ export default function FileViewerScreen() {
     }
   };
 
-  const handleDownload = () => {
-    const link = metadata?.webContentLink || localItem?.webContentLink || metadata?.webViewLink;
-    if (link) {
-      Linking.openURL(link);
-    } else {
-      toast.error('Download link unavailable.');
+  const handleDownload = useCallback(async () => {
+    if (!id) return;
+    try {
+      const fileName = metadata?.name || localItem?.name || 'download';
+      const mime = metadata?.mimeType || localItem?.mimeType || 'application/octet-stream';
+      toast.info(`Downloading "${fileName}"...`);
+      const token = await getValidToken();
+      await downloadFileToDevice(token, id, fileName, mime);
+      toast.success(`Downloaded "${fileName}" to your device!`);
+    } catch (e: any) {
+      toast.error(e.message ?? 'Download failed.');
     }
-  };
+  }, [id, metadata, localItem, getValidToken]);
 
   const handleTrash = useCallback(async () => {
     if (!id) return;

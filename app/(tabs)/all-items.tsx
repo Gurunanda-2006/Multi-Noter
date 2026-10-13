@@ -23,6 +23,7 @@ import { sortItems, filterItems } from '../../services/files/fileService';
 import { categoryLabel } from '../../utils/mime';
 import { useAuth } from '../../services/auth/useAuth';
 import { moveToTrash, permanentlyDeleteFile } from '../../services/google-drive/driveApi';
+import { downloadFileToDevice } from '../../services/files/downloadService';
 import { colors, radius, spacing, typography, shadow } from '../../components/design/theme';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -106,6 +107,17 @@ export default function AllItemsScreen() {
       setTargetItem(null);
     }
   }, [targetItem, getValidToken, refresh]);
+
+  const handleDownload = useCallback(async (item: StorageItem) => {
+    try {
+      toast.info(`Downloading "${item.name}"...`);
+      const token = await getValidToken();
+      await downloadFileToDevice(token, item.id, item.name, item.mimeType);
+      toast.success(`Downloaded "${item.name}" to your device!`);
+    } catch (e: any) {
+      toast.error(e.message ?? 'Failed to download file.');
+    }
+  }, [getValidToken]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -191,6 +203,7 @@ export default function AllItemsScreen() {
               onPress={handlePress}
               onSelectPress={handleToggleSelect}
               onDeletePress={handleDeleteTrigger}
+              onDownloadPress={handleDownload}
             />
           )}
           contentContainerStyle={styles.listContent}

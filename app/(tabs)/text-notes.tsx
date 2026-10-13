@@ -21,6 +21,7 @@ import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { toast } from '../../components/Toast';
 import { StorageItem } from '../../types';
 import { moveToTrash, permanentlyDeleteFile } from '../../services/google-drive/driveApi';
+import { downloadFileToDevice } from '../../services/files/downloadService';
 import { colors, radius, spacing, typography, shadow } from '../../components/design/theme';
 
 export default function TextNotesScreen() {
@@ -96,6 +97,17 @@ export default function TextNotesScreen() {
     }
   }, [targetItem, getValidToken, refresh]);
 
+  const handleDownload = useCallback(async (item: StorageItem) => {
+    try {
+      toast.info(`Downloading "${item.name}"...`);
+      const token = await getValidToken();
+      await downloadFileToDevice(token, item.id, item.name, item.mimeType);
+      toast.success(`Downloaded "${item.name}" to your device!`);
+    } catch (e: any) {
+      toast.error(e.message ?? 'Failed to download file.');
+    }
+  }, [getValidToken]);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
@@ -130,6 +142,7 @@ export default function TextNotesScreen() {
               onPress={handlePress}
               onSelectPress={handleToggleSelect}
               onDeletePress={handleDeleteTrigger}
+              onDownloadPress={handleDownload}
             />
           )}
           contentContainerStyle={styles.listContent}

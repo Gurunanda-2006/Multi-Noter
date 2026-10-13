@@ -18,6 +18,7 @@ interface Props {
   onPress: (item: StorageItem) => void;
   onSelectPress?: (item: StorageItem) => void;
   onDeletePress?: (item: StorageItem) => void;
+  onDownloadPress?: (item: StorageItem) => void;
   onMenuPress?: (item: StorageItem) => void;
 }
 
@@ -27,6 +28,7 @@ export function FileCard({
   onPress,
   onSelectPress,
   onDeletePress,
+  onDownloadPress,
   onMenuPress,
 }: Props) {
   const showThumbnail = item.category === 'images' && !!item.thumbnailLink;
@@ -77,15 +79,26 @@ export function FileCard({
         </View>
       </TouchableOpacity>
 
-      {/* Right-side action area: When selected, shows a prominent Delete button */}
+      {/* Right-side action area: Download button & Selection Delete button */}
       <View style={styles.rightActionWrap}>
+        {onDownloadPress ? (
+          <TouchableOpacity
+            style={styles.downloadBtn}
+            onPress={() => onDownloadPress(item)}
+            activeOpacity={0.7}
+            hitSlop={6}
+          >
+            <Ionicons name="download-outline" size={20} color={colors.accent} />
+          </TouchableOpacity>
+        ) : null}
+
         {isSelected && onDeletePress ? (
           <TouchableOpacity
             style={styles.deleteBtn}
             onPress={() => onDeletePress(item)}
             activeOpacity={0.8}
           >
-            <Ionicons name="trash-outline" size={18} color="#FFFFFF" />
+            <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
             <Text style={styles.deleteBtnText}>Delete</Text>
           </TouchableOpacity>
         ) : onMenuPress ? (
@@ -176,8 +189,14 @@ const styles = StyleSheet.create({
     ...typography.caption,
   },
   rightActionWrap: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  downloadBtn: {
+    padding: spacing.xs + 2,
+    borderRadius: radius.md,
+    backgroundColor: '#EEF2FF',
   },
   deleteBtn: {
     flexDirection: 'row',
