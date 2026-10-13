@@ -1,24 +1,30 @@
+# Dependencies
 node_modules/
 .expo/
 dist/
 web-build/
-*.orig.*
+
+# Environment variables & secrets (CRITICAL: Never commit to git)
+.env
+.env.local
+.env.*.local
+*.env
+backend/.env
+frontend/.env
+
+# Native builds
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
 *.orig.*
-web-build/
-.env
-.env.local
-.env.*.local
-server/.env
-server/node_modules/
-server/dist/
+
+# Logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
-expo-env.d.ts
+
+# OS files
 .DS_Store
 Thumbs.db

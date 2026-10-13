@@ -1,24 +1,64 @@
-# Personal Storage Hub
+# Multi-Noter (Personal Storage Hub)
 
-Personal Storage Hub is a clean, minimal personal knowledge and file storage application built with React Native (Expo Router) and Node.js. It saves all your text notes and uploaded files directly into your personal Google Drive, making Drive the ultimate source of truth without requiring any third-party database.
+A personal storage and knowledge hub that saves text notes, documents, images, and videos directly into your own Google Drive — accessible across Web, Android, and iOS with zero third-party databases.
 
-## Features
+---
 
-- **Save Text Notes**: Write and edit notes directly; automatically saved as `.txt` files in Google Drive.
-- **Auto-Categorized Uploads**: Upload documents, images, and videos; files are classified by MIME type into dedicated Drive folders (`Text Notes`, `PDFs`, `Word Documents`, `Images`, `Videos`, `Other Files`).
-- **Resumable Uploads**: Large files stream via Google Drive Resumable Upload protocol.
-- **Drive as Source of Truth**: Clear local cache anytime; the app rebuilds history straight from Google Drive metadata.
-- **Trash & Recovery**: Move items to Drive trash, view trashed files, restore them, or permanently delete them.
-- **Cross-Platform**: Runs on Web, Android, and iOS.
-- **Zero Database**: No Firebase, Supabase, Mongo, or PostgreSQL needed.
+## Project Structure
 
-## Tech Stack
+```
+MULTI NOTER/
+├── frontend/               # React Native + Expo Web frontend
+│   ├── app/                # Expo Router screens (Tabs, Note Editor, Upload, Viewer)
+│   ├── components/         # UI Design System, File Cards, Dialogs, Toasts
+│   ├── services/           # Google Drive API v3 client, OAuth PKCE, Cache, Download
+│   ├── types/              # TypeScript models
+│   ├── utils/              # MIME classification, Filename sanitization, Validation
+│   ├── vercel.json         # Vercel deployment configuration
+│   └── package.json
+│
+├── backend/                # Node.js + Express TypeScript server
+│   ├── src/
+│   │   ├── index.ts        # Express server entry point
+│   │   └── routes/auth.ts  # Secure OAuth token exchange & refresh proxy
+│   └── package.json
+│
+└── .gitignore              # Protects .env files from being pushed
+```
 
-- **Frontend**: React Native, Expo SDK 51, Expo Router, TypeScript
-- **Backend / Token Exchange**: Node.js, Express, TypeScript
-- **Auth**: Google OAuth 2.0 PKCE, `expo-auth-session`, `expo-secure-store`
-- **Cloud Storage**: Google Drive API v3
+---
 
-## Documentation
+## Local Development
 
-For full setup, Google Cloud credentials, and deployment guides, see [docs/SETUP.md](./docs/SETUP.md).
+### 1. Run the Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+Backend runs on `http://localhost:3001` (Health check: `http://localhost:3001/health`).
+
+### 2. Run the Frontend
+```bash
+cd frontend
+npm install
+npm run web
+```
+Frontend runs on `http://localhost:8081`.
+
+---
+
+## Deployment Instructions
+
+### Backend (Render)
+1. In Render, create a **Web Service** from this GitHub repository.
+2. Set **Root Directory** to `backend`.
+3. Build Command: `npm install && npm run build`
+4. Start Command: `npm start`
+5. Set Environment Variables from `backend/.env.example`.
+
+### Frontend (Vercel)
+1. In Vercel, import this repository.
+2. Set **Root Directory** to `frontend`.
+3. Set Environment Variables from `frontend/.env.example`.
+4. Deploy!
