@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StorageItem } from '../types';
 import { categoryIcon } from '../utils/mime';
 import { formatDate, formatFileSize } from '../utils/filename';
-import { colors, radius, shadow, spacing, typography } from './design/theme';
+import { colors, radius, spacing, typography, glassCard } from './design/theme';
 
 interface Props {
   item: StorageItem;
@@ -19,6 +19,7 @@ interface Props {
   onSelectPress?: (item: StorageItem) => void;
   onDeletePress?: (item: StorageItem) => void;
   onDownloadPress?: (item: StorageItem) => void;
+  onSharePress?: (item: StorageItem) => void;
   onMenuPress?: (item: StorageItem) => void;
 }
 
@@ -29,13 +30,14 @@ export function FileCard({
   onSelectPress,
   onDeletePress,
   onDownloadPress,
+  onSharePress,
   onMenuPress,
 }: Props) {
   const showThumbnail = item.category === 'images' && !!item.thumbnailLink;
 
   return (
     <View style={[styles.card, isSelected && styles.cardSelected]}>
-      {/* Selection checkbox/radio on the left */}
+      {/* Selection checkbox */}
       {onSelectPress ? (
         <TouchableOpacity
           style={styles.selectBtn}
@@ -43,26 +45,26 @@ export function FileCard({
           hitSlop={8}
           activeOpacity={0.7}
         >
-          <Ionicons
-            name={isSelected ? 'checkbox' : 'square-outline'}
-            size={22}
-            color={isSelected ? colors.accent : colors.textDisabled}
-          />
+          <View style={[styles.checkbox, isSelected && styles.checkboxActive]}>
+            {isSelected && (
+              <Ionicons name="checkmark" size={14} color="#FFF" />
+            )}
+          </View>
         </TouchableOpacity>
       ) : null}
 
-      {/* Main card content clickable area */}
+      {/* Main content */}
       <TouchableOpacity
         style={styles.contentWrap}
         onPress={() => onPress(item)}
-        activeOpacity={0.8}
+        activeOpacity={0.7}
       >
         <View style={styles.preview}>
           {showThumbnail ? (
             <Image source={{ uri: item.thumbnailLink! }} style={styles.thumbnail} />
           ) : (
             <View style={[styles.iconContainer, { backgroundColor: categoryBgColor(item.category) }]}>
-              <Ionicons name={categoryIcon(item.category) as any} size={28} color={categoryFgColor(item.category)} />
+              <Ionicons name={categoryIcon(item.category) as any} size={24} color={categoryFgColor(item.category)} />
             </View>
           )}
         </View>
@@ -70,7 +72,7 @@ export function FileCard({
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={2}>{item.title ?? item.name}</Text>
           {item.preview ? (
-            <Text style={styles.preview2} numberOfLines={1}>{item.preview}</Text>
+            <Text style={styles.previewText} numberOfLines={1}>{item.preview}</Text>
           ) : null}
           <View style={styles.meta}>
             <Text style={styles.metaText}>{formatDate(item.modifiedTime)}</Text>
@@ -79,16 +81,27 @@ export function FileCard({
         </View>
       </TouchableOpacity>
 
-      {/* Right-side action area: Download button & Selection Delete button */}
+      {/* Right-side actions: Share, Download, Delete */}
       <View style={styles.rightActionWrap}>
+        {onSharePress ? (
+          <TouchableOpacity
+            style={styles.actionBtn}
+            onPress={() => onSharePress(item)}
+            activeOpacity={0.7}
+            hitSlop={6}
+          >
+            <Ionicons name="share-outline" size={18} color={colors.info} />
+          </TouchableOpacity>
+        ) : null}
+
         {onDownloadPress ? (
           <TouchableOpacity
-            style={styles.downloadBtn}
+            style={styles.actionBtn}
             onPress={() => onDownloadPress(item)}
             activeOpacity={0.7}
             hitSlop={6}
           >
-            <Ionicons name="download-outline" size={20} color={colors.accent} />
+            <Ionicons name="download-outline" size={18} color={colors.accent} />
           </TouchableOpacity>
         ) : null}
 
@@ -98,12 +111,11 @@ export function FileCard({
             onPress={() => onDeletePress(item)}
             activeOpacity={0.8}
           >
-            <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
-            <Text style={styles.deleteBtnText}>Delete</Text>
+            <Ionicons name="trash-outline" size={14} color="#FFFFFF" />
           </TouchableOpacity>
         ) : onMenuPress ? (
           <TouchableOpacity onPress={() => onMenuPress(item)} hitSlop={8} style={styles.menu}>
-            <Ionicons name="ellipsis-vertical" size={18} color={colors.textSecondary} />
+            <Ionicons name="ellipsis-vertical" size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -113,38 +125,58 @@ export function FileCard({
 
 function categoryBgColor(cat: StorageItem['category']): string {
   const map: Record<string, string> = {
-    'text-notes': '#EEF2FF', pdfs: '#FEF2F2', 'word-documents': '#EFF6FF',
-    images: '#F0FDF4', videos: '#FDF4FF', other: '#FFFBEB',
+    'text-notes': 'rgba(99, 102, 241, 0.2)',
+    pdfs: 'rgba(248, 113, 113, 0.2)',
+    'word-documents': 'rgba(96, 165, 250, 0.2)',
+    images: 'rgba(52, 211, 153, 0.2)',
+    videos: 'rgba(168, 85, 247, 0.2)',
+    other: 'rgba(251, 191, 36, 0.2)',
   };
-  return map[cat] ?? '#F3F4F6';
+  return map[cat] ?? 'rgba(255, 255, 255, 0.1)';
 }
 
 function categoryFgColor(cat: StorageItem['category']): string {
   const map: Record<string, string> = {
-    'text-notes': '#4F46E5', pdfs: '#EF4444', 'word-documents': '#3B82F6',
-    images: '#22C55E', videos: '#A855F7', other: '#F59E0B',
+    'text-notes': '#818CF8',
+    pdfs: '#F87171',
+    'word-documents': '#60A5FA',
+    images: '#34D399',
+    videos: '#A78BFA',
+    other: '#FBBF24',
   };
-  return map[cat] ?? '#6B7280';
+  return map[cat] ?? colors.textSecondary;
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: colors.glass,
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.glassBorder,
     padding: spacing.base,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    ...shadow.sm,
   },
   cardSelected: {
     borderColor: colors.accent,
-    backgroundColor: '#FAFAFF',
+    backgroundColor: 'rgba(52, 211, 153, 0.08)',
   },
   selectBtn: {
     padding: 2,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: colors.textDisabled,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
   },
   contentWrap: {
     flex: 1,
@@ -153,18 +185,18 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   preview: {
-    width: 50,
-    height: 50,
+    width: 46,
+    height: 46,
     flexShrink: 0,
   },
   thumbnail: {
-    width: 50,
-    height: 50,
+    width: 46,
+    height: 46,
     borderRadius: radius.md,
   },
   iconContainer: {
-    width: 50,
-    height: 50,
+    width: 46,
+    height: 46,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
@@ -176,9 +208,11 @@ const styles = StyleSheet.create({
   name: {
     ...typography.body,
     fontWeight: '600',
+    fontSize: 14,
   },
-  preview2: {
+  previewText: {
     ...typography.bodySmall,
+    fontSize: 12,
   },
   meta: {
     flexDirection: 'row',
@@ -187,30 +221,28 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...typography.caption,
+    fontSize: 10,
   },
   rightActionWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 6,
   },
-  downloadBtn: {
-    padding: spacing.xs + 2,
-    borderRadius: radius.md,
-    backgroundColor: '#EEF2FF',
+  actionBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   deleteBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    width: 32,
+    height: 32,
+    borderRadius: radius.full,
     backgroundColor: colors.danger,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-  },
-  deleteBtnText: {
-    ...typography.caption,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   menu: {
     padding: 4,

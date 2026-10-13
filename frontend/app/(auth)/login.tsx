@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../services/auth/useAuth';
 import { LoadingIndicator } from '../../components/LoadingIndicator';
-import { colors, radius, spacing, typography } from '../../components/design/theme';
+import { colors, radius, spacing, typography, shadow } from '../../components/design/theme';
 
 export default function LoginScreen() {
   const { isAuthenticated, isLoading, signIn, error } = useAuth();
@@ -33,7 +33,7 @@ export default function LoginScreen() {
       >
         <View style={styles.logoArea}>
           <View style={styles.logoCircle}>
-            <Ionicons name="cloud-outline" size={52} color={colors.accent} />
+            <Ionicons name="cloud-outline" size={48} color={colors.accent} />
           </View>
           <Text style={styles.appName}>Personal Storage Hub</Text>
           <Text style={styles.tagline}>Your central hub for personal notes & files</Text>
@@ -49,7 +49,7 @@ export default function LoginScreen() {
           ].map((f) => (
             <View key={f.icon} style={styles.featureRow}>
               <View style={styles.featureIcon}>
-                <Ionicons name={f.icon as any} size={20} color={colors.accent} />
+                <Ionicons name={f.icon as any} size={18} color={colors.accent} />
               </View>
               <Text style={styles.featureText}>{f.label}</Text>
             </View>
@@ -81,7 +81,7 @@ export default function LoginScreen() {
 
         {Platform.OS !== 'web' ? (
           <Text style={styles.platformNote}>
-            On mobile, run via an Expo development build for custom OAuth redirect handling. On web, authentication connects directly or via the local server proxy.
+            On mobile, run via an Expo development build for custom OAuth redirect handling.
           </Text>
         ) : null}
       </ScrollView>
@@ -90,7 +90,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   scroll: {
     flexGrow: 1,
     paddingHorizontal: spacing.xl,
@@ -103,9 +103,12 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: radius.full,
-    backgroundColor: colors.accentLight,
+    backgroundColor: 'rgba(52, 211, 153, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(52, 211, 153, 0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.glow,
   },
   appName: { ...typography.h1, textAlign: 'center' },
   tagline: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },
@@ -115,19 +118,21 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: radius.md,
-    backgroundColor: colors.accentLight,
+    backgroundColor: 'rgba(52, 211, 153, 0.12)',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
   },
-  featureText: { ...typography.body, flex: 1 },
+  featureText: { ...typography.body, flex: 1, fontSize: 14 },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     backgroundColor: colors.dangerLight,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(248, 113, 113, 0.3)',
   },
   errorText: { ...typography.bodySmall, color: colors.danger, flex: 1 },
   signInBtn: {
@@ -135,16 +140,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: radius.xxl,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingVertical: spacing.base,
     paddingHorizontal: spacing.xl,
+    ...shadow.md,
   },
   googleIcon: {
-    width: 26,
-    height: 26,
+    width: 28,
+    height: 28,
     borderRadius: radius.full,
     backgroundColor: '#4285F4',
     alignItems: 'center',
@@ -163,8 +169,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.warning,
     backgroundColor: colors.warningLight,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.sm,
     lineHeight: 17,
+    borderWidth: 1,
+    borderColor: 'rgba(251, 191, 36, 0.2)',
   },
 });

@@ -21,12 +21,13 @@ import {
   permanentlyDeleteFile,
 } from '../services/google-drive/driveApi';
 import { downloadFileToDevice } from '../services/files/downloadService';
-import { categoryIcon, categoryLabel } from '../utils/mime';
+import { shareFile } from '../services/files/shareService';
 import { formatFileSize, formatDate } from '../utils/filename';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { GlassBackground } from '../components/GlassBackground';
 import { toast } from '../components/Toast';
-import { StorageItem, DriveFile } from '../types';
+import { DriveFile } from '../types';
 import { colors, radius, spacing, typography, shadow } from '../components/design/theme';
 
 export default function FileViewerScreen() {
@@ -86,6 +87,23 @@ export default function FileViewerScreen() {
     }
   }, [id, metadata, localItem, getValidToken]);
 
+  const handleShare = useCallback(async () => {
+    if (!id) return;
+    try {
+      const fileName = metadata?.name || localItem?.name || 'File';
+      const mime = metadata?.mimeType || localItem?.mimeType || 'application/octet-stream';
+      const token = await getValidToken();
+      await shareFile(token, id, fileName, mime);
+      toast.success('Shared successfully!');
+    } catch (e: any) {
+      if (e.message?.includes('clipboard')) {
+        toast.info(e.message);
+      } else {
+        toast.error(e.message ?? 'Share failed.');
+      }
+    }
+  }, [id, metadata, localItem, getValidToken]);
+
   const handleTrash = useCallback(async () => {
     if (!id) return;
     try {
@@ -126,154 +144,179 @@ export default function FileViewerScreen() {
   const isImage = mimeType.startsWith('image/');
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{name}</Text>
-        <TouchableOpacity onPress={handleOpenInDrive} hitSlop={8}>
-          <Ionicons name="open-outline" size={22} color={colors.accent} />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {isImage && metadata?.thumbnailLink ? (
-          <View style={styles.imagePreviewWrap}>
-            <Image
-              source={{ uri: metadata.thumbnailLink.replace(/=s\d+/, '=s800') }}
-              style={styles.imagePreview}
-              resizeMode="contain"
-            />
-          </View>
-        ) : textContent !== null ? (
-          <View style={styles.textContainer}>
-            <Text style={styles.textContent}>{textContent}</Text>
-          </View>
-        ) : (
-          <View style={styles.defaultPreviewWrap}>
-            <Ionicons name="document-text-outline" size={64} color={colors.textDisabled} />
-            <Text style={styles.previewNotice}>
-              Preview not directly available inside this view. Open in Google Drive or download to view.
-            </Text>
-          </View>
-        )}
-
-        <View style={styles.detailsCard}>
-          <Text style={styles.cardTitle}>File Details</Text>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Name</Text>
-            <Text style={styles.detailValue} numberOfLines={2}>{name}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Size</Text>
-            <Text style={styles.detailValue}>{formatFileSize(size)}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>MIME Type</Text>
-            <Text style={styles.detailValue}>{mimeType}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Modified</Text>
-            <Text style={styles.detailValue}>
-              {metadata?.modifiedTime ? formatDate(metadata.modifiedTime) : 'N/A'}
-            </Text>
+    <GlassBackground>
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.headerBtn}>
+            <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle} numberOfLines={1}>{name}</Text>
+          <View style={styles.headerRightActions}>
+            <TouchableOpacity onPress={handleShare} hitSlop={8} style={styles.headerBtn}>
+              <Ionicons name="share-outline" size={20} color={colors.info} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleOpenInDrive} hitSlop={8} style={styles.headerBtn}>
+              <Ionicons name="open-outline" size={20} color={colors.accent} />
+            </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.actionsSection}>
-          <TouchableOpacity style={styles.primaryAction} onPress={handleOpenInDrive}>
-            <Ionicons name="logo-google" size={18} color="#FFF" />
-            <Text style={styles.primaryActionText}>Open in Google Drive</Text>
-          </TouchableOpacity>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {isImage && metadata?.thumbnailLink ? (
+            <View style={styles.imagePreviewWrap}>
+              <Image
+                source={{ uri: metadata.thumbnailLink.replace(/=s\d+/, '=s800') }}
+                style={styles.imagePreview}
+                resizeMode="contain"
+              />
+            </View>
+          ) : textContent !== null ? (
+            <View style={styles.textContainer}>
+              <Text style={styles.textContent}>{textContent}</Text>
+            </View>
+          ) : (
+            <View style={styles.defaultPreviewWrap}>
+              <Ionicons name="document-text-outline" size={56} color={colors.textDisabled} />
+              <Text style={styles.previewNotice}>
+                Preview not directly available inside this view. Open in Google Drive or download to view.
+              </Text>
+            </View>
+          )}
 
-          <TouchableOpacity style={styles.secondaryAction} onPress={handleDownload}>
-            <Ionicons name="download-outline" size={18} color={colors.textPrimary} />
-            <Text style={styles.secondaryActionText}>Download</Text>
-          </TouchableOpacity>
+          <View style={styles.detailsCard}>
+            <Text style={styles.cardTitle}>File Details</Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Name</Text>
+              <Text style={styles.detailValue} numberOfLines={2}>{name}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Size</Text>
+              <Text style={styles.detailValue}>{formatFileSize(size)}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>MIME Type</Text>
+              <Text style={styles.detailValue}>{mimeType}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Modified</Text>
+              <Text style={styles.detailValue}>
+                {metadata?.modifiedTime ? formatDate(metadata.modifiedTime) : 'N/A'}
+              </Text>
+            </View>
+          </View>
 
-          <TouchableOpacity
-            style={[styles.secondaryAction, { borderColor: colors.danger }]}
-            onPress={() => setShowTrashConfirm(true)}
-          >
-            <Ionicons name="trash-outline" size={18} color={colors.danger} />
-            <Text style={[styles.secondaryActionText, { color: colors.danger }]}>Move to Trash</Text>
-          </TouchableOpacity>
+          <View style={styles.actionsSection}>
+            <TouchableOpacity style={styles.primaryAction} onPress={handleOpenInDrive} activeOpacity={0.8}>
+              <Ionicons name="logo-google" size={18} color="#000" />
+              <Text style={styles.primaryActionText}>Open in Google Drive</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.secondaryAction, { backgroundColor: colors.dangerLight, borderColor: 'transparent' }]}
-            onPress={() => setShowDeleteConfirm(true)}
-          >
-            <Ionicons name="close-circle-outline" size={18} color={colors.danger} />
-            <Text style={[styles.secondaryActionText, { color: colors.danger }]}>Delete Permanently</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <TouchableOpacity style={styles.secondaryAction} onPress={handleShare} activeOpacity={0.8}>
+              <Ionicons name="share-outline" size={18} color={colors.info} />
+              <Text style={[styles.secondaryActionText, { color: colors.info }]}>Share File</Text>
+            </TouchableOpacity>
 
-      <ConfirmDialog
-        visible={showTrashConfirm}
-        title="Move to Trash"
-        message={`Are you sure you want to move "${name}" to Google Drive Trash?`}
-        confirmLabel="Move to Trash"
-        onConfirm={handleTrash}
-        onCancel={() => setShowTrashConfirm(false)}
-      />
+            <TouchableOpacity style={styles.secondaryAction} onPress={handleDownload} activeOpacity={0.8}>
+              <Ionicons name="download-outline" size={18} color={colors.accent} />
+              <Text style={[styles.secondaryActionText, { color: colors.accent }]}>Download to Device</Text>
+            </TouchableOpacity>
 
-      <ConfirmDialog
-        visible={showDeleteConfirm}
-        title="Delete Permanently"
-        message={`Are you sure you want to permanently delete "${name}"? This operation cannot be undone.`}
-        danger
-        confirmLabel="Delete Permanently"
-        onConfirm={handleDeletePermanently}
-        onCancel={() => setShowDeleteConfirm(false)}
-      />
-    </SafeAreaView>
+            <TouchableOpacity
+              style={[styles.secondaryAction, { borderColor: 'rgba(248, 113, 113, 0.3)' }]}
+              onPress={() => setShowTrashConfirm(true)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.danger} />
+              <Text style={[styles.secondaryActionText, { color: colors.danger }]}>Move to Trash</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.secondaryAction, { backgroundColor: colors.dangerLight, borderColor: 'rgba(248, 113, 113, 0.3)' }]}
+              onPress={() => setShowDeleteConfirm(true)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="close-circle-outline" size={18} color={colors.danger} />
+              <Text style={[styles.secondaryActionText, { color: colors.danger }]}>Delete Permanently</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        <ConfirmDialog
+          visible={showTrashConfirm}
+          title="Move to Trash"
+          message={`Are you sure you want to move "${name}" to Google Drive Trash?`}
+          confirmLabel="Move to Trash"
+          icon="trash-outline"
+          onConfirm={handleTrash}
+          onCancel={() => setShowTrashConfirm(false)}
+        />
+
+        <ConfirmDialog
+          visible={showDeleteConfirm}
+          title="Delete Permanently"
+          message={`Are you sure you want to permanently delete "${name}"? This operation cannot be undone.`}
+          danger
+          confirmLabel="Delete Forever"
+          icon="close-circle-outline"
+          onConfirm={handleDeletePermanently}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      </SafeAreaView>
+    </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
-  headerTitle: { ...typography.h3, flex: 1, marginHorizontal: spacing.md },
+  headerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: { ...typography.h3, flex: 1, marginHorizontal: spacing.sm },
+  headerRightActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 60 },
   imagePreviewWrap: {
     width: '100%',
     height: 300,
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: radius.xl,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   imagePreview: { width: '100%', height: '100%' },
   textContainer: {
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     padding: spacing.base,
-    borderRadius: radius.lg,
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   textContent: { ...typography.body, lineHeight: 22 },
   defaultPreviewWrap: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     padding: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
@@ -281,10 +324,10 @@ const styles = StyleSheet.create({
   },
   previewNotice: { ...typography.bodySmall, textAlign: 'center', maxWidth: 300 },
   detailsCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     padding: spacing.base,
     gap: spacing.md,
     ...shadow.sm,
@@ -292,26 +335,27 @@ const styles = StyleSheet.create({
   cardTitle: { ...typography.h3 },
   detailRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
   detailLabel: { ...typography.bodySmall, color: colors.textSecondary },
-  detailValue: { ...typography.bodySmall, fontWeight: '500', flexShrink: 1, textAlign: 'right' },
-  actionsSection: { gap: spacing.sm, marginTop: spacing.sm },
+  detailValue: { ...typography.bodySmall, fontWeight: '500', flexShrink: 1, textAlign: 'right', color: colors.textPrimary },
+  actionsSection: { gap: spacing.sm, marginTop: spacing.xs },
   primaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.accent,
-    borderRadius: radius.md,
+    borderRadius: radius.xl,
     paddingVertical: spacing.md,
     gap: spacing.sm,
+    ...shadow.glow,
   },
-  primaryActionText: { ...typography.button, color: '#FFF' },
+  primaryActionText: { ...typography.button, color: '#000000', fontWeight: '700' },
   secondaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.14)',
     paddingVertical: spacing.md,
     gap: spacing.sm,
   },

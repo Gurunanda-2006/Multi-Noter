@@ -15,7 +15,7 @@ export function EmptyState({ icon = 'folder-open-outline', title, description, a
   return (
     <View style={styles.container}>
       <View style={styles.iconWrap}>
-        <Ionicons name={icon as any} size={48} color={colors.textDisabled} />
+        <Ionicons name={icon as any} size={44} color={colors.textDisabled} />
       </View>
       <Text style={styles.title}>{title}</Text>
       {description ? <Text style={styles.description}>{description}</Text> : null}
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: radius.full,
-    backgroundColor: colors.borderLight,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.sm,

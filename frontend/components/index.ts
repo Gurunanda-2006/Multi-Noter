@@ -1,4 +1,5 @@
 export * from './design/theme';
+export * from './GlassBackground';
 export * from './LoadingIndicator';
 export * from './EmptyState';
 export * from './Toast';

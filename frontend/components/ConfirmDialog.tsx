@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radius, spacing, typography } from './design/theme';
+import { colors, radius, spacing, typography, shadow } from './design/theme';
 
 interface Props {
   visible: boolean;
@@ -63,18 +63,21 @@ export function ConfirmDialog({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: colors.overlay,
+    backgroundColor: colors.overlayHeavy,
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.xl,
   },
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
+    backgroundColor: 'rgba(30, 30, 30, 0.95)',
+    borderRadius: radius.xxl,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
     padding: spacing.xl,
     width: '100%',
     maxWidth: 380,
     gap: spacing.md,
+    ...shadow.lg,
   },
   iconWrap: {
     width: 56,
@@ -106,8 +109,8 @@ const styles = StyleSheet.create({
   cancelBtn: {
     flex: 1,
     paddingVertical: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.borderLight,
+    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
   },
   cancelText: {
@@ -117,7 +120,7 @@ const styles = StyleSheet.create({
   confirmBtn: {
     flex: 1,
     paddingVertical: spacing.md,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     backgroundColor: colors.accent,
     alignItems: 'center',
   },

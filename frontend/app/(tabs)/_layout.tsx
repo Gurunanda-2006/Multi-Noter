@@ -42,16 +42,18 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textDisabled,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          borderTopColor: 'rgba(255, 255, 255, 0.1)',
           borderTopWidth: 1,
           height: Platform.OS === 'ios' ? 84 : 64,
           paddingBottom: Platform.OS === 'ios' ? 24 : 8,
           paddingTop: 8,
+          position: 'absolute',
         },
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
+          fontSize: 10,
+          fontWeight: '600',
+          letterSpacing: 0.2,
         },
       }}
     >

@@ -1,12 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
+  Platform,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Platform,
-  Alert,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -16,10 +15,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../services/auth/useAuth';
 import { useDrive } from '../features/file-library/useDrive';
 import { uploadFile, initiateResumableUpload, uploadChunk } from '../services/google-drive/driveApi';
-import { classifyFile, categoryLabel, categoryIcon } from '../utils/mime';
-import { formatFileSize, sanitizeFilename } from '../utils/filename';
+import { classifyFile, categoryLabel } from '../utils/mime';
+import { sanitizeFilename } from '../utils/filename';
 import { validateFileSize } from '../utils/validation';
 import { UploadProgressItem } from '../components/UploadProgress';
+import { GlassBackground } from '../components/GlassBackground';
 import { toast } from '../components/Toast';
 import { UploadTask, FileCategory } from '../types';
 import { colors, radius, spacing, typography, shadow } from '../components/design/theme';
@@ -239,115 +239,125 @@ export default function UploadScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Upload Files</Text>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.subtitle}>
-          Files are automatically categorized and placed into the corresponding Google Drive folder.
-        </Text>
-
-        <View style={styles.pickerSection}>
-          <TouchableOpacity
-            style={styles.pickerButton}
-            onPress={handlePickDocument}
-            disabled={isProcessing}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.iconWrap, { backgroundColor: '#EEF2FF' }]}>
-              <Ionicons name="document-attach-outline" size={28} color={colors.accent} />
-            </View>
-            <View style={styles.pickerTextWrap}>
-              <Text style={styles.pickerButtonTitle}>Select Documents / Any Files</Text>
-              <Text style={styles.pickerButtonSub}>PDFs, Word documents, text files, archives, and more</Text>
-            </View>
+    <GlassBackground>
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.pickerButton}
-            onPress={() => handlePickMedia(ImagePicker.MediaTypeOptions.Images)}
-            disabled={isProcessing}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.iconWrap, { backgroundColor: '#F0FDF4' }]}>
-              <Ionicons name="image-outline" size={28} color={colors.success} />
-            </View>
-            <View style={styles.pickerTextWrap}>
-              <Text style={styles.pickerButtonTitle}>Select Photos / Images</Text>
-              <Text style={styles.pickerButtonSub}>JPEG, PNG, WEBP, GIF, HEIC</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.pickerButton}
-            onPress={() => handlePickMedia(ImagePicker.MediaTypeOptions.Videos)}
-            disabled={isProcessing}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.iconWrap, { backgroundColor: '#FDF4FF' }]}>
-              <Ionicons name="videocam-outline" size={28} color="#A855F7" />
-            </View>
-            <View style={styles.pickerTextWrap}>
-              <Text style={styles.pickerButtonTitle}>Select Videos</Text>
-              <Text style={styles.pickerButtonSub}>MP4, MOV, WEBM, MKV</Text>
-            </View>
-          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Upload Files</Text>
+          <View style={{ width: 36 }} />
         </View>
 
-        {tasks.length > 0 && (
-          <View style={styles.tasksSection}>
-            <View style={styles.tasksHeader}>
-              <Text style={styles.tasksTitle}>Upload History / Queue</Text>
-              <TouchableOpacity onPress={() => setTasks([])} hitSlop={8}>
-                <Text style={styles.clearText}>Clear</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.tasksList}>
-              {tasks.map((task) => (
-                <UploadProgressItem key={task.id} task={task} />
-              ))}
-            </View>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.subtitle}>
+            Files are automatically categorized and placed into the corresponding Google Drive folder.
+          </Text>
+
+          <View style={styles.pickerSection}>
+            <TouchableOpacity
+              style={styles.pickerButton}
+              onPress={handlePickDocument}
+              disabled={isProcessing}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.iconWrap, { backgroundColor: 'rgba(52, 211, 153, 0.15)' }]}>
+                <Ionicons name="document-attach-outline" size={26} color={colors.accent} />
+              </View>
+              <View style={styles.pickerTextWrap}>
+                <Text style={styles.pickerButtonTitle}>Select Documents / Any Files</Text>
+                <Text style={styles.pickerButtonSub}>PDFs, Word documents, text files, archives, and more</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.pickerButton}
+              onPress={() => handlePickMedia(ImagePicker.MediaTypeOptions.Images)}
+              disabled={isProcessing}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.iconWrap, { backgroundColor: 'rgba(96, 165, 250, 0.15)' }]}>
+                <Ionicons name="image-outline" size={26} color={colors.info} />
+              </View>
+              <View style={styles.pickerTextWrap}>
+                <Text style={styles.pickerButtonTitle}>Select Photos / Images</Text>
+                <Text style={styles.pickerButtonSub}>JPEG, PNG, WEBP, GIF, HEIC</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.pickerButton}
+              onPress={() => handlePickMedia(ImagePicker.MediaTypeOptions.Videos)}
+              disabled={isProcessing}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.iconWrap, { backgroundColor: 'rgba(168, 85, 247, 0.15)' }]}>
+                <Ionicons name="videocam-outline" size={26} color="#A78BFA" />
+              </View>
+              <View style={styles.pickerTextWrap}>
+                <Text style={styles.pickerButtonTitle}>Select Videos</Text>
+                <Text style={styles.pickerButtonSub}>MP4, MOV, WEBM, MKV</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+
+          {tasks.length > 0 && (
+            <View style={styles.tasksSection}>
+              <View style={styles.tasksHeader}>
+                <Text style={styles.tasksTitle}>Upload History / Queue</Text>
+                <TouchableOpacity onPress={() => setTasks([])} hitSlop={8}>
+                  <Text style={styles.clearText}>Clear</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.tasksList}>
+                {tasks.map((task) => (
+                  <UploadProgressItem key={task.id} task={task} />
+                ))}
+              </View>
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: { ...typography.h3 },
   scroll: { flex: 1 },
-  scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 40 },
+  scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 60 },
   subtitle: { ...typography.bodySmall, color: colors.textSecondary },
   pickerSection: { gap: spacing.md },
   pickerButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.14)',
     padding: spacing.base,
     gap: spacing.base,
     ...shadow.sm,
@@ -355,13 +365,13 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 52,
     height: 52,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   pickerTextWrap: { flex: 1, gap: 2 },
   pickerButtonTitle: { ...typography.body, fontWeight: '600' },
-  pickerButtonSub: { ...typography.caption },
+  pickerButtonSub: { ...typography.caption, color: colors.textSecondary },
   tasksSection: { marginTop: spacing.md, gap: spacing.md },
   tasksHeader: {
     flexDirection: 'row',
@@ -369,6 +379,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tasksTitle: { ...typography.h3 },
-  clearText: { ...typography.bodySmall, color: colors.accent },
+  clearText: { ...typography.bodySmall, color: colors.accent, fontWeight: '600' },
   tasksList: { gap: spacing.sm },
 });

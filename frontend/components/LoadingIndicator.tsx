@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   fullScreen: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
   },
   message: {
     ...typography.bodySmall,

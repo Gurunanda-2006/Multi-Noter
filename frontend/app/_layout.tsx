@@ -5,15 +5,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '../services/auth/useAuth';
 import { DriveProvider } from '../features/file-library/useDrive';
 import { ToastContainer } from '../components/Toast';
-import { View, StyleSheet } from 'react-native';
+import { GlassBackground } from '../components/GlassBackground';
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
         <DriveProvider>
-          <View style={styles.root}>
-            <Stack screenOptions={{ headerShown: false }}>
+          <GlassBackground>
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -22,14 +22,10 @@ export default function RootLayout() {
               <Stack.Screen name="file-viewer" />
             </Stack>
             <ToastContainer />
-            <StatusBar style="dark" />
-          </View>
+            <StatusBar style="light" />
+          </GlassBackground>
         </DriveProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FAFAFA' },
-});

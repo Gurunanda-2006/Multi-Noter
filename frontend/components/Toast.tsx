@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radius, spacing, typography } from './design/theme';
+import { colors, radius, spacing, typography, shadow } from './design/theme';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -19,13 +19,12 @@ interface ToastMessage {
 }
 
 const ToastConfig: Record<ToastType, { bg: string; icon: string; iconColor: string }> = {
-  success: { bg: colors.successLight, icon: 'checkmark-circle-outline', iconColor: colors.success },
-  error: { bg: colors.dangerLight, icon: 'close-circle-outline', iconColor: colors.danger },
-  info: { bg: colors.accentLight, icon: 'information-circle-outline', iconColor: colors.accent },
-  warning: { bg: colors.warningLight, icon: 'warning-outline', iconColor: colors.warning },
+  success: { bg: 'rgba(52, 211, 153, 0.2)', icon: 'checkmark-circle-outline', iconColor: colors.success },
+  error: { bg: 'rgba(248, 113, 113, 0.2)', icon: 'close-circle-outline', iconColor: colors.danger },
+  info: { bg: 'rgba(96, 165, 250, 0.2)', icon: 'information-circle-outline', iconColor: colors.info },
+  warning: { bg: 'rgba(251, 191, 36, 0.2)', icon: 'warning-outline', iconColor: colors.warning },
 };
 
-// Global toast controller
 type ToastListener = (msg: ToastMessage) => void;
 const listeners: ToastListener[] = [];
 
@@ -53,7 +52,7 @@ export function ToastContainer() {
 
   useEffect(() => {
     const listener: ToastListener = (msg) => {
-      setMessages((prev) => [...prev.slice(-2), msg]); // max 3 toasts
+      setMessages((prev) => [...prev.slice(-2), msg]);
       const t = setTimeout(() => dismiss(msg.id), 4000);
       timers.current.set(msg.id, t);
     };
@@ -101,15 +100,14 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    borderRadius: radius.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 4,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    ...shadow.md,
   },
   text: {
     ...typography.body,
     flex: 1,
+    fontSize: 13,
   },
 });

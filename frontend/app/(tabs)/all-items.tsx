@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   FlatList,
+  Modal,
+  Platform,
   RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -24,6 +25,7 @@ import { categoryLabel } from '../../utils/mime';
 import { useAuth } from '../../services/auth/useAuth';
 import { moveToTrash, permanentlyDeleteFile } from '../../services/google-drive/driveApi';
 import { downloadFileToDevice } from '../../services/files/downloadService';
+import { shareFile } from '../../services/files/shareService';
 import { colors, radius, spacing, typography, shadow } from '../../components/design/theme';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -119,6 +121,20 @@ export default function AllItemsScreen() {
     }
   }, [getValidToken]);
 
+  const handleShare = useCallback(async (item: StorageItem) => {
+    try {
+      const token = await getValidToken();
+      await shareFile(token, item.id, item.name, item.mimeType);
+      toast.success('Shared successfully!');
+    } catch (e: any) {
+      if (e.message?.includes('clipboard')) {
+        toast.info(e.message);
+      } else {
+        toast.error(e.message ?? 'Share failed.');
+      }
+    }
+  }, [getValidToken]);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
@@ -204,6 +220,7 @@ export default function AllItemsScreen() {
               onSelectPress={handleToggleSelect}
               onDeletePress={handleDeleteTrigger}
               onDownloadPress={handleDownload}
+              onSharePress={handleShare}
             />
           )}
           contentContainerStyle={styles.listContent}
@@ -254,7 +271,7 @@ export default function AllItemsScreen() {
                   setShowTrashConfirm(true);
                 }}
               >
-                <View style={[styles.choiceIconWrap, { backgroundColor: '#EEF2FF' }]}>
+                <View style={[styles.choiceIconWrap, { backgroundColor: colors.accentLight }]}>
                   <Ionicons name="trash-bin-outline" size={20} color={colors.accent} />
                 </View>
                 <View style={styles.choiceTextWrap}>
@@ -264,13 +281,13 @@ export default function AllItemsScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.choiceBtn, { borderColor: '#FEE2E2' }]}
+                style={[styles.choiceBtn, { borderColor: 'rgba(248, 113, 113, 0.3)' }]}
                 onPress={() => {
                   setShowChoiceModal(false);
                   setShowPermanentConfirm(true);
                 }}
               >
-                <View style={[styles.choiceIconWrap, { backgroundColor: '#FEF2F2' }]}>
+                <View style={[styles.choiceIconWrap, { backgroundColor: colors.dangerLight }]}>
                   <Ionicons name="close-circle-outline" size={20} color={colors.danger} />
                 </View>
                 <View style={styles.choiceTextWrap}>
@@ -327,38 +344,40 @@ export default function AllItemsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
   title: { ...typography.h2 },
-  searchWrap: { padding: spacing.base, backgroundColor: colors.surface },
-  filtersRow: { paddingHorizontal: spacing.base, paddingBottom: spacing.sm, backgroundColor: colors.surface },
+  searchWrap: { paddingHorizontal: spacing.base, paddingTop: spacing.md, paddingBottom: spacing.xs },
+  filtersRow: { paddingHorizontal: spacing.base, paddingVertical: spacing.xs },
   sortRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
   sortChip: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: radius.full,
-    backgroundColor: colors.borderLight,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
-  sortChipActive: { backgroundColor: colors.accentLight },
+  sortChipActive: {
+    backgroundColor: 'rgba(52, 211, 153, 0.2)',
+    borderColor: colors.accent,
+  },
   sortChipText: { ...typography.caption, fontWeight: '500', color: colors.textSecondary },
-  sortChipTextActive: { color: colors.accent },
+  sortChipTextActive: { color: colors.accent, fontWeight: '600' },
   catScroll: {
     flexDirection: 'row',
     gap: spacing.sm,
     paddingHorizontal: spacing.base,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingVertical: spacing.xs,
     flexWrap: 'wrap',
   },
   catChip: {
@@ -366,34 +385,39 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     borderRadius: radius.full,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
   catChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
   catChipText: { ...typography.caption, fontWeight: '500', color: colors.textSecondary },
-  catChipTextActive: { color: '#FFF' },
-  listContent: { padding: spacing.base, paddingBottom: 40 },
+  catChipTextActive: { color: '#FFF', fontWeight: '600' },
+  listContent: {
+    padding: spacing.base,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: colors.overlayHeavy,
     justifyContent: 'center',
     alignItems: 'center',
     padding: spacing.base,
   },
   modalCard: {
     width: '100%',
-    maxWidth: 440,
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
+    maxWidth: 420,
+    backgroundColor: 'rgba(30, 30, 30, 0.95)',
+    borderRadius: radius.xxl,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
     padding: spacing.xl,
     gap: spacing.md,
-    ...shadow.md,
+    ...shadow.lg,
   },
   modalIconWrap: {
     width: 56,
     height: 56,
     borderRadius: radius.full,
-    backgroundColor: '#FEF2F2',
+    backgroundColor: colors.dangerLight,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -404,12 +428,12 @@ const styles = StyleSheet.create({
   choiceBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     borderRadius: radius.lg,
     padding: spacing.base,
     gap: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
   choiceIconWrap: {
     width: 40,
@@ -420,13 +444,13 @@ const styles = StyleSheet.create({
   },
   choiceTextWrap: { flex: 1, gap: 2 },
   choiceTitle: { ...typography.body, fontWeight: '700' },
-  choiceDesc: { ...typography.caption },
+  choiceDesc: { ...typography.caption, color: colors.textSecondary },
   cancelBtn: {
     paddingVertical: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.borderLight,
+    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     marginTop: spacing.xs,
   },
-  cancelBtnText: { ...typography.button, color: colors.textSecondary },
+  cancelBtnText: { ...typography.button, color: colors.textPrimary },
 });

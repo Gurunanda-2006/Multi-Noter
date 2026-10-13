@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   FlatList,
+  Platform,
   RefreshControl,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +14,6 @@ import { useAuth } from '../../services/auth/useAuth';
 import { useDrive } from '../../features/file-library/useDrive';
 import { restoreFromTrash, permanentlyDeleteFile } from '../../services/google-drive/driveApi';
 import { EmptyState } from '../../components/EmptyState';
-import { LoadingIndicator } from '../../components/LoadingIndicator';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { toast } from '../../components/Toast';
 import { StorageItem } from '../../types';
@@ -24,7 +24,6 @@ import { colors, radius, spacing, typography, shadow } from '../../components/de
 export default function TrashScreen() {
   const { getValidToken } = useAuth();
   const { trashedItems, refreshTrash, refresh } = useDrive();
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<StorageItem | null>(null);
   const [actionType, setActionType] = useState<'restore' | 'delete' | null>(null);
 
@@ -70,7 +69,7 @@ export default function TrashScreen() {
         renderItem={({ item }) => (
           <View style={styles.trashRow}>
             <View style={styles.iconWrap}>
-              <Ionicons name={categoryIcon(item.category) as any} size={24} color={colors.textSecondary} />
+              <Ionicons name={categoryIcon(item.category) as any} size={22} color={colors.textSecondary} />
             </View>
             <View style={styles.itemInfo}>
               <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
@@ -86,7 +85,7 @@ export default function TrashScreen() {
                   setActionType('restore');
                 }}
               >
-                <Ionicons name="arrow-undo-outline" size={20} color={colors.accent} />
+                <Ionicons name="arrow-undo-outline" size={18} color={colors.accent} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.iconBtn}
@@ -95,7 +94,7 @@ export default function TrashScreen() {
                   setActionType('delete');
                 }}
               >
-                <Ionicons name="trash-outline" size={20} color={colors.danger} />
+                <Ionicons name="trash-outline" size={18} color={colors.danger} />
               </TouchableOpacity>
             </View>
           </View>
@@ -140,41 +139,51 @@ export default function TrashScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
   title: { ...typography.h2 },
-  listContent: { padding: spacing.base, paddingBottom: 40 },
+  listContent: {
+    padding: spacing.base,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
+  },
   trashRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.md,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    padding: spacing.base,
     gap: spacing.md,
     ...shadow.sm,
   },
   iconWrap: {
     width: 44,
     height: 44,
-    borderRadius: radius.sm,
-    backgroundColor: colors.borderLight,
+    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   itemInfo: { flex: 1, gap: 2 },
-  itemName: { ...typography.body, fontWeight: '500' },
-  itemMeta: { ...typography.caption },
+  itemName: { ...typography.body, fontWeight: '600', fontSize: 14 },
+  itemMeta: { ...typography.caption, color: colors.textSecondary },
   actionButtons: { flexDirection: 'row', gap: spacing.sm },
-  iconBtn: { padding: spacing.xs },
+  iconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

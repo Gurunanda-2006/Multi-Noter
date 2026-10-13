@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
+  Image,
+  Platform,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Image,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -98,7 +99,9 @@ export default function SettingsScreen() {
             onPress={() => setShowClearCacheConfirm(true)}
             activeOpacity={0.8}
           >
-            <Ionicons name="refresh-circle-outline" size={22} color={colors.accent} />
+            <View style={[styles.actionIconWrap, { backgroundColor: colors.accentLight }]}>
+              <Ionicons name="refresh-circle-outline" size={22} color={colors.accent} />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.actionTitle}>Clear Local Cache</Text>
               <Text style={styles.actionSubtitle}>Force rebuild library from Google Drive</Text>
@@ -110,7 +113,9 @@ export default function SettingsScreen() {
             onPress={() => setShowSignOutConfirm(true)}
             activeOpacity={0.8}
           >
-            <Ionicons name="log-out-outline" size={22} color={colors.danger} />
+            <View style={[styles.actionIconWrap, { backgroundColor: colors.dangerLight }]}>
+              <Ionicons name="log-out-outline" size={22} color={colors.danger} />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={[styles.actionTitle, { color: colors.danger }]}>Disconnect Account</Text>
               <Text style={styles.actionSubtitle}>Your files in Google Drive remain safe and intact</Text>
@@ -147,24 +152,33 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   header: {
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
   title: { ...typography.h2 },
   scroll: { flex: 1 },
-  scrollContent: { padding: spacing.base, gap: spacing.xl, paddingBottom: 60 },
+  scrollContent: {
+    padding: spacing.base,
+    gap: spacing.xl,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
+  },
   section: { gap: spacing.sm },
-  sectionHeader: { ...typography.caption, textTransform: 'uppercase', color: colors.textSecondary },
+  sectionHeader: {
+    ...typography.caption,
+    textTransform: 'uppercase',
+    color: colors.textSecondary,
+    letterSpacing: 0.8,
+  },
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     padding: spacing.base,
     gap: spacing.md,
     ...shadow.sm,
@@ -175,30 +189,39 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: radius.full,
-    backgroundColor: colors.accent,
+    backgroundColor: 'rgba(52, 211, 153, 0.2)',
+    borderWidth: 1.5,
+    borderColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarText: { color: '#FFF', fontWeight: '700', fontSize: 20 },
+  avatarText: { color: colors.accent, fontWeight: '700', fontSize: 20 },
   accountDetails: { flex: 1, gap: 2 },
   accountName: { ...typography.body, fontWeight: '600' },
-  accountEmail: { ...typography.bodySmall },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  accountEmail: { ...typography.bodySmall, color: colors.textSecondary },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   infoLabel: { ...typography.bodySmall, color: colors.textSecondary },
-  infoValue: { ...typography.bodySmall, fontWeight: '500' },
+  infoValue: { ...typography.bodySmall, fontWeight: '600', color: colors.textPrimary },
   actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     padding: spacing.base,
     gap: spacing.md,
     ...shadow.sm,
   },
+  actionIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   actionTitle: { ...typography.body, fontWeight: '600' },
-  actionSubtitle: { ...typography.caption },
+  actionSubtitle: { ...typography.caption, color: colors.textSecondary },
   footer: { alignItems: 'center', gap: 4, marginTop: spacing.md },
   versionText: { ...typography.caption, color: colors.textDisabled },
   sourceText: { ...typography.caption, color: colors.textDisabled },

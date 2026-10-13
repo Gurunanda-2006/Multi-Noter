@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -16,15 +17,18 @@ import { FileCard } from '../../components/FileCard';
 import { SearchBar } from '../../components/SearchBar';
 import { LoadingIndicator } from '../../components/LoadingIndicator';
 import { EmptyState } from '../../components/EmptyState';
+import { toast } from '../../components/Toast';
 import { StorageItem, FileCategory } from '../../types';
 import { categoryLabel, categoryIcon } from '../../utils/mime';
 import { formatFileSize } from '../../utils/filename';
+import { downloadFileToDevice } from '../../services/files/downloadService';
+import { shareFile } from '../../services/files/shareService';
 import { colors, radius, shadow, spacing, typography } from '../../components/design/theme';
 
 const CATEGORIES: FileCategory[] = ['text-notes', 'pdfs', 'word-documents', 'images', 'videos', 'other'];
 
 export default function HomeScreen() {
-  const { session } = useAuth();
+  const { session, getValidToken } = useAuth();
   const { items, isLoading, isSyncing, refresh, quota, error, isReady } = useDrive();
   const [search, setSearch] = useState('');
 
@@ -57,6 +61,31 @@ export default function HomeScreen() {
     else if (cat === 'videos') router.push('/(tabs)/videos');
     else router.push({ pathname: '/(tabs)/all-items', params: { category: cat } });
   }, []);
+
+  const handleDownload = useCallback(async (item: StorageItem) => {
+    try {
+      toast.info(`Downloading "${item.name}"...`);
+      const token = await getValidToken();
+      await downloadFileToDevice(token, item.id, item.name, item.mimeType);
+      toast.success(`Downloaded "${item.name}"!`);
+    } catch (e: any) {
+      toast.error(e.message ?? 'Download failed.');
+    }
+  }, [getValidToken]);
+
+  const handleShare = useCallback(async (item: StorageItem) => {
+    try {
+      const token = await getValidToken();
+      await shareFile(token, item.id, item.name, item.mimeType);
+      toast.success('Shared successfully!');
+    } catch (e: any) {
+      if (e.message?.includes('clipboard')) {
+        toast.info(e.message);
+      } else {
+        toast.error(e.message ?? 'Share failed.');
+      }
+    }
+  }, [getValidToken]);
 
   const userInitial = session?.userInfo?.name?.charAt(0).toUpperCase() ?? '?';
 
@@ -108,7 +137,13 @@ export default function HomeScreen() {
             ) : (
               <View style={styles.itemList}>
                 {searchResults.map((item) => (
-                  <FileCard key={item.id} item={item} onPress={handleItemPress} />
+                  <FileCard
+                    key={item.id}
+                    item={item}
+                    onPress={handleItemPress}
+                    onDownloadPress={handleDownload}
+                    onSharePress={handleShare}
+                  />
                 ))}
               </View>
             )}
@@ -119,10 +154,10 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={[styles.actionBtn, { flex: 1 }]}
                 onPress={() => router.push('/note-editor')}
-                activeOpacity={0.85}
+                activeOpacity={0.8}
               >
-                <View style={[styles.actionIconWrap, { backgroundColor: '#EEF2FF' }]}>
-                  <Ionicons name="pencil-outline" size={24} color={colors.accent} />
+                <View style={[styles.actionIconWrap, { backgroundColor: 'rgba(129, 140, 248, 0.15)' }]}>
+                  <Ionicons name="pencil-outline" size={22} color="#818CF8" />
                 </View>
                 <Text style={styles.actionLabel}>Save Text</Text>
                 <Text style={styles.actionSub}>Write a plain-text note</Text>
@@ -131,10 +166,10 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={[styles.actionBtn, { flex: 1 }]}
                 onPress={() => router.push('/upload')}
-                activeOpacity={0.85}
+                activeOpacity={0.8}
               >
-                <View style={[styles.actionIconWrap, { backgroundColor: '#F0FDF4' }]}>
-                  <Ionicons name="cloud-upload-outline" size={24} color={colors.success} />
+                <View style={[styles.actionIconWrap, { backgroundColor: 'rgba(52, 211, 153, 0.15)' }]}>
+                  <Ionicons name="cloud-upload-outline" size={22} color={colors.accent} />
                 </View>
                 <Text style={styles.actionLabel}>Upload Files</Text>
                 <Text style={styles.actionSub}>Documents & media</Text>
@@ -151,11 +186,11 @@ export default function HomeScreen() {
                       key={cat}
                       style={styles.categoryCard}
                       onPress={() => handleCategoryPress(cat)}
-                      activeOpacity={0.85}
+                      activeOpacity={0.8}
                     >
                       <Ionicons
                         name={categoryIcon(cat) as any}
-                        size={22}
+                        size={20}
                         color={colors.accent}
                       />
                       <Text style={styles.categoryLabel}>{categoryLabel(cat)}</Text>
@@ -208,7 +243,13 @@ export default function HomeScreen() {
               ) : (
                 <View style={styles.itemList}>
                   {recentItems.map((item) => (
-                    <FileCard key={item.id} item={item} onPress={handleItemPress} />
+                    <FileCard
+                      key={item.id}
+                      item={item}
+                      onPress={handleItemPress}
+                      onDownloadPress={handleDownload}
+                      onSharePress={handleShare}
+                    />
                   ))}
                 </View>
               )}
@@ -221,16 +262,16 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
   headerLeft: { gap: 2, flex: 1 },
   appName: { ...typography.h2 },
@@ -243,33 +284,34 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: radius.full,
-    backgroundColor: colors.accent,
+    backgroundColor: 'rgba(52, 211, 153, 0.2)',
+    borderWidth: 1.5,
+    borderColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: spacing.md,
   },
-  avatarText: { color: '#FFF', fontWeight: '700', fontSize: 16 },
+  avatarText: { color: colors.accent, fontWeight: '700', fontSize: 16 },
   scroll: { flex: 1 },
-  scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 40 },
+  scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: Platform.OS === 'ios' ? 100 : 80 },
   actions: { flexDirection: 'row', gap: spacing.md },
   actionBtn: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     padding: spacing.base,
     gap: spacing.xs,
-    ...shadow.sm,
   },
   actionIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
+    width: 42,
+    height: 42,
+    borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  actionLabel: { ...typography.h3, marginTop: spacing.xs },
-  actionSub: { ...typography.bodySmall },
+  actionLabel: { ...typography.h3, marginTop: spacing.xs, fontSize: 15 },
+  actionSub: { ...typography.bodySmall, fontSize: 12 },
   section: { gap: spacing.md },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionTitle: { ...typography.h3 },
@@ -281,24 +323,23 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '31%',
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     padding: spacing.md,
     gap: spacing.xs,
     alignItems: 'flex-start',
-    ...shadow.sm,
   },
-  categoryLabel: { ...typography.caption, fontWeight: '500', color: colors.textSecondary },
+  categoryLabel: { ...typography.caption, fontWeight: '500', color: colors.textSecondary, fontSize: 10 },
   categoryCount: { ...typography.h3, color: colors.textPrimary },
   statsRow: { flexDirection: 'row', gap: spacing.md },
   statBox: {
     flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     padding: spacing.base,
     alignItems: 'center',
     gap: spacing.xs,
@@ -311,8 +352,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
     backgroundColor: colors.dangerLight,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(248, 113, 113, 0.3)',
   },
   errorText: { ...typography.bodySmall, color: colors.danger, flex: 1 },
 });

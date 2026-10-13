@@ -24,7 +24,8 @@ import { generateNoteFilename } from '../utils/filename';
 import { validateNoteContent } from '../utils/validation';
 import { toast } from '../components/Toast';
 import { LoadingIndicator } from '../components/LoadingIndicator';
-import { colors, radius, spacing, typography } from '../components/design/theme';
+import { GlassBackground } from '../components/GlassBackground';
+import { colors, radius, spacing, typography, shadow } from '../components/design/theme';
 
 export default function NoteEditorScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -121,86 +122,92 @@ export default function NoteEditorScreen() {
 
   if (loadError) {
     return (
-      <SafeAreaView style={styles.safe}>
-        <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.danger} />
-          <Text style={styles.errorTitle}>Error Loading Note</Text>
-          <Text style={styles.errorMsg}>{loadError}</Text>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={styles.backBtnText}>Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      <GlassBackground>
+        <SafeAreaView style={styles.safe}>
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={48} color={colors.danger} />
+            <Text style={styles.errorTitle}>Error Loading Note</Text>
+            <Text style={styles.errorMsg}>{loadError}</Text>
+            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+              <Text style={styles.backBtnText}>Go Back</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </GlassBackground>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView
-        style={styles.kav}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-      >
-        <View style={styles.toolbar}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-            <Ionicons name="close-outline" size={26} color={colors.textPrimary} />
-          </TouchableOpacity>
-          <Text style={styles.toolbarTitle}>{isEditing ? 'Edit Note' : 'New Note'}</Text>
-          <TouchableOpacity
-            style={[styles.saveBtn, isSaving && styles.saveBtnDisabled]}
-            onPress={handleSave}
-            disabled={isSaving}
-          >
-            <Text style={styles.saveBtnText}>{isSaving ? 'Saving...' : 'Save'}</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
+    <GlassBackground>
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <KeyboardAvoidingView
+          style={styles.kav}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-          <TextInput
-            style={styles.titleInput}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Title (optional)"
-            placeholderTextColor={colors.textDisabled}
-            returnKeyType="next"
-            maxLength={200}
-          />
+          <View style={styles.toolbar}>
+            <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.closeBtn}>
+              <Ionicons name="close" size={24} color={colors.textPrimary} />
+            </TouchableOpacity>
+            <Text style={styles.toolbarTitle}>{isEditing ? 'Edit Note' : 'New Note'}</Text>
+            <TouchableOpacity
+              style={[styles.saveBtn, isSaving && styles.saveBtnDisabled]}
+              onPress={handleSave}
+              disabled={isSaving}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.saveBtnText}>{isSaving ? 'Saving...' : 'Save'}</Text>
+            </TouchableOpacity>
+          </View>
 
-          <TextInput
-            style={styles.tagsInput}
-            value={tags}
-            onChangeText={setTags}
-            placeholder="Tags (e.g. personal, work, ideas)"
-            placeholderTextColor={colors.textDisabled}
-            returnKeyType="next"
-            maxLength={300}
-          />
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <TextInput
+              style={styles.titleInput}
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Title (optional)"
+              placeholderTextColor={colors.textDisabled}
+              returnKeyType="next"
+              maxLength={200}
+            />
 
-          <TextInput
-            style={styles.contentInput}
-            value={content}
-            onChangeText={setContent}
-            placeholder="Write your note here... supports plain text, code, ideas, lists, and unicode characters."
-            placeholderTextColor={colors.textDisabled}
-            multiline
-            textAlignVertical="top"
-            autoFocus={!isEditing}
-            scrollEnabled={false}
-          />
+            <TextInput
+              style={styles.tagsInput}
+              value={tags}
+              onChangeText={setTags}
+              placeholder="Tags (e.g. personal, work, ideas)"
+              placeholderTextColor={colors.textDisabled}
+              returnKeyType="next"
+              maxLength={300}
+            />
 
-          <Text style={styles.charCount}>{content.length.toLocaleString()} characters</Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <TextInput
+              style={styles.contentInput}
+              value={content}
+              onChangeText={setContent}
+              placeholder="Write your note here... supports plain text, code, ideas, lists, and unicode characters."
+              placeholderTextColor={colors.textDisabled}
+              multiline
+              textAlignVertical="top"
+              autoFocus={!isEditing}
+              scrollEnabled={false}
+            />
+
+            <Text style={styles.charCount}>{content.length.toLocaleString()} characters</Text>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: 'transparent' },
   kav: { flex: 1 },
   toolbar: {
     flexDirection: 'row',
@@ -208,44 +215,66 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  closeBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toolbarTitle: { ...typography.h3 },
   saveBtn: {
-    paddingHorizontal: spacing.base,
+    paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     backgroundColor: colors.accent,
     borderRadius: radius.full,
+    ...shadow.glow,
   },
   saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { ...typography.button, color: '#FFF' },
+  saveBtnText: { ...typography.button, color: '#000000', fontWeight: '700' },
   scroll: { flex: 1 },
-  scrollContent: { padding: spacing.base, gap: spacing.sm, paddingBottom: 60 },
+  scrollContent: { padding: spacing.base, gap: spacing.md, paddingBottom: 60 },
   titleInput: {
     ...typography.h2,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingVertical: spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.14)',
+    paddingHorizontal: spacing.base,
+    paddingVertical: spacing.md,
+    color: '#FFFFFF',
   },
   tagsInput: {
     ...typography.bodySmall,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-    paddingVertical: spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: spacing.base,
+    paddingVertical: spacing.sm + 2,
     color: colors.textSecondary,
   },
   contentInput: {
     ...typography.body,
-    minHeight: 300,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.14)',
+    padding: spacing.base,
+    color: '#FFFFFF',
+    minHeight: 320,
     lineHeight: 24,
-    paddingTop: spacing.md,
   },
   charCount: {
     ...typography.caption,
     textAlign: 'right',
-    marginTop: spacing.sm,
+    color: colors.textDisabled,
+    marginTop: spacing.xs,
   },
   errorContainer: {
     flex: 1,
@@ -263,5 +292,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderRadius: radius.full,
   },
-  backBtnText: { ...typography.button, color: '#FFF' },
+  backBtnText: { ...typography.button, color: '#000' },
 });

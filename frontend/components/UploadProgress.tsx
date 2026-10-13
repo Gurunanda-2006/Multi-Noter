@@ -53,10 +53,10 @@ export function UploadProgressItem({ task }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: colors.glass,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.glassBorder,
     padding: spacing.base,
     gap: spacing.sm,
   },
@@ -72,10 +72,11 @@ const styles = StyleSheet.create({
   name: {
     ...typography.body,
     flex: 1,
+    fontSize: 13,
   },
   barBg: {
     height: 4,
-    backgroundColor: colors.borderLight,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: radius.full,
     overflow: 'hidden',
   },
