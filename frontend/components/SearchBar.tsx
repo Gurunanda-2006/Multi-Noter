@@ -38,10 +38,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(20, 30, 25, 0.8)',
     borderRadius: radius.full,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: 'rgba(255, 255, 255, 0.18)',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.sm + 2,
     gap: spacing.sm,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     ...typography.body,
-    color: colors.textPrimary,
+    color: '#FFFFFF',
     padding: 0,
     margin: 0,
   },

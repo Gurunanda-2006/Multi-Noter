@@ -149,10 +149,10 @@ function categoryFgColor(cat: StorageItem['category']): string {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.glass,
+    backgroundColor: 'rgba(20, 30, 25, 0.78)',
     borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
+    borderColor: 'rgba(255, 255, 255, 0.16)',
     padding: spacing.base,
     flexDirection: 'row',
     alignItems: 'center',
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderColor: colors.accent,
-    backgroundColor: 'rgba(52, 211, 153, 0.08)',
+    backgroundColor: 'rgba(52, 211, 153, 0.15)',
   },
   selectBtn: {
     padding: 2,
