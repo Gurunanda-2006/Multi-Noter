@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { UploadTask } from '../types';
 import { categoryIcon } from '../utils/mime';
 import { formatFileSize } from '../utils/filename';
-import { colors, radius, spacing, typography } from './design/theme';
+import { colors, spacing, typography } from './design/theme';
 
 interface Props {
   task: UploadTask;
@@ -53,10 +53,10 @@ export function UploadProgressItem({ task }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.glass,
-    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
+    borderColor: colors.border,
     padding: spacing.base,
     gap: spacing.sm,
   },
@@ -71,25 +71,27 @@ const styles = StyleSheet.create({
   },
   name: {
     ...typography.body,
+    color: colors.textPrimary,
     flex: 1,
     fontSize: 13,
   },
   barBg: {
     height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: radius.full,
+    backgroundColor: colors.borderLight,
+    borderRadius: 0,
     overflow: 'hidden',
   },
   barFill: {
     height: '100%',
     backgroundColor: colors.accent,
-    borderRadius: radius.full,
+    borderRadius: 0,
   },
   barFillError: {
     backgroundColor: colors.danger,
   },
   subText: {
     ...typography.caption,
+    color: colors.textSecondary,
   },
   errorText: {
     ...typography.caption,

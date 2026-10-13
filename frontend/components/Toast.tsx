@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Animated,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -8,7 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radius, spacing, typography, shadow } from './design/theme';
+import { colors, spacing, typography, shadow } from './design/theme';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -18,11 +17,11 @@ interface ToastMessage {
   message: string;
 }
 
-const ToastConfig: Record<ToastType, { bg: string; icon: string; iconColor: string }> = {
-  success: { bg: 'rgba(52, 211, 153, 0.2)', icon: 'checkmark-circle-outline', iconColor: colors.success },
-  error: { bg: 'rgba(248, 113, 113, 0.2)', icon: 'close-circle-outline', iconColor: colors.danger },
-  info: { bg: 'rgba(96, 165, 250, 0.2)', icon: 'information-circle-outline', iconColor: colors.info },
-  warning: { bg: 'rgba(251, 191, 36, 0.2)', icon: 'warning-outline', iconColor: colors.warning },
+const ToastConfig: Record<ToastType, { bg: string; border: string; icon: string; iconColor: string; textColor: string }> = {
+  success: { bg: '#F0FDF4', border: '#BBF7D0', icon: 'checkmark-circle-outline', iconColor: colors.success, textColor: '#166534' },
+  error: { bg: '#FEF2F2', border: '#FECACA', icon: 'close-circle-outline', iconColor: colors.danger, textColor: '#991B1B' },
+  info: { bg: '#EFF6FF', border: '#BFDBFE', icon: 'information-circle-outline', iconColor: colors.info, textColor: '#1E40AF' },
+  warning: { bg: '#FFFBEB', border: '#FDE68A', icon: 'warning-outline', iconColor: colors.warning, textColor: '#92400E' },
 };
 
 type ToastListener = (msg: ToastMessage) => void;
@@ -72,12 +71,12 @@ export function ToastContainer() {
         return (
           <TouchableOpacity
             key={msg.id}
-            style={[styles.toast, { backgroundColor: config.bg }]}
+            style={[styles.toast, { backgroundColor: config.bg, borderColor: config.border }]}
             onPress={() => dismiss(msg.id)}
             activeOpacity={0.9}
           >
             <Ionicons name={config.icon as any} size={20} color={config.iconColor} />
-            <Text style={styles.text} numberOfLines={3}>{msg.message}</Text>
+            <Text style={[styles.text, { color: config.textColor }]} numberOfLines={3}>{msg.message}</Text>
           </TouchableOpacity>
         );
       })}
@@ -100,14 +99,14 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    borderRadius: radius.xl,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
     ...shadow.md,
   },
   text: {
     ...typography.body,
     flex: 1,
     fontSize: 13,
+    fontWeight: '500',
   },
 });

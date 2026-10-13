@@ -2,8 +2,8 @@ import { ScrollViewStyleReset } from 'expo-router/html';
 import { type PropsWithChildren } from 'react';
 
 /**
- * This file is web-only and used to configure the root HTML for every web page.
- * The <body> style ensures the dark glassmorphic background persists cleanly across browsers.
+ * Web root HTML configuration.
+ * Clean, static light theme canvas.
  */
 export default function Root({ children }: PropsWithChildren) {
   return (
@@ -26,12 +26,12 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #0b130e;
-  color: #ffffff;
+  background-color: #FAFAFA;
+  color: #111827;
   overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 body {
-  background-color: #0b130e;
+  background-color: #FAFAFA;
 }
 `;

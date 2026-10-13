@@ -1,54 +1,48 @@
-// Dark glassmorphism theme inspired by glowing tree background
 export const colors = {
-  // Backgrounds
-  background: 'transparent',
-  surface: 'rgba(255, 255, 255, 0.08)',
-  surfaceElevated: 'rgba(255, 255, 255, 0.12)',
-  surfacePressed: 'rgba(255, 255, 255, 0.16)',
-  
-  // Glass effects
-  glass: 'rgba(255, 255, 255, 0.1)',
-  glassBorder: 'rgba(255, 255, 255, 0.18)',
-  glassLight: 'rgba(255, 255, 255, 0.05)',
-  
-  // Borders
-  border: 'rgba(255, 255, 255, 0.12)',
-  borderLight: 'rgba(255, 255, 255, 0.06)',
-  
-  // Text
-  textPrimary: '#FFFFFF',
-  textSecondary: 'rgba(255, 255, 255, 0.65)',
-  textDisabled: 'rgba(255, 255, 255, 0.35)',
-  textMuted: 'rgba(255, 255, 255, 0.45)',
-  
-  // Accent - Emerald green matching the tree glow
-  accent: '#34D399',
-  accentLight: 'rgba(52, 211, 153, 0.15)',
-  accentDark: '#059669',
-  
+  background: '#FAFAFA',
+  surface: '#FFFFFF',
+  surfaceElevated: '#FFFFFF',
+  surfacePressed: '#F3F4F6',
+  border: '#E5E7EB',
+  borderLight: '#F3F4F6',
+  textPrimary: '#111827',
+  textSecondary: '#6B7280',
+  textDisabled: '#9CA3AF',
+  textMuted: '#9CA3AF',
+
+  // Light orange accent for buttons & icons
+  accent: '#FF8A3D',
+  accentLight: '#FFF7ED',
+  accentDark: '#EA580C',
+
   // Semantic
-  danger: '#F87171',
-  dangerLight: 'rgba(248, 113, 113, 0.15)',
-  success: '#34D399',
-  successLight: 'rgba(52, 211, 153, 0.15)',
-  warning: '#FBBF24',
-  warningLight: 'rgba(251, 191, 36, 0.15)',
-  info: '#60A5FA',
-  infoLight: 'rgba(96, 165, 250, 0.15)',
-  
-  // Overlay
-  overlay: 'rgba(0, 0, 0, 0.6)',
+  danger: '#EF4444',
+  dangerLight: '#FEF2F2',
+  success: '#22C55E',
+  successLight: '#F0FDF4',
+  warning: '#F59E0B',
+  warningLight: '#FFFBEB',
+  info: '#3B82F6',
+  infoLight: '#EFF6FF',
+
+  overlay: 'rgba(0, 0, 0, 0.5)',
   overlayHeavy: 'rgba(0, 0, 0, 0.75)',
+
+  // Backward compatibility aliases
+  glass: '#FFFFFF',
+  glassBorder: '#E5E7EB',
+  glassLight: '#F9FAFB',
 };
 
+// Perfectly square: NO rounded corners or edge smoothing anywhere
 export const radius = {
-  xs: 6,
-  sm: 10,
-  md: 14,
-  lg: 20,
-  xl: 24,
-  xxl: 32,
-  full: 9999,
+  xs: 0,
+  sm: 0,
+  md: 0,
+  lg: 0,
+  xl: 0,
+  xxl: 0,
+  full: 0,
 };
 
 export const spacing = {
@@ -65,56 +59,56 @@ export const spacing = {
 export const shadow = {
   sm: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   md: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   lg: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
   glow: {
-    shadowColor: '#34D399',
+    shadowColor: '#FF8A3D',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
   },
 };
 
 export const typography = {
-  h1: { fontSize: 28, fontWeight: '700' as const, color: '#FFFFFF', letterSpacing: -0.5 },
-  h2: { fontSize: 22, fontWeight: '600' as const, color: '#FFFFFF', letterSpacing: -0.3 },
-  h3: { fontSize: 17, fontWeight: '600' as const, color: '#FFFFFF' },
-  body: { fontSize: 15, fontWeight: '400' as const, color: '#FFFFFF' },
-  bodySmall: { fontSize: 13, fontWeight: '400' as const, color: 'rgba(255, 255, 255, 0.65)' },
-  caption: { fontSize: 11, fontWeight: '400' as const, color: 'rgba(255, 255, 255, 0.45)' },
-  button: { fontSize: 15, fontWeight: '600' as const, letterSpacing: 0.3 },
+  h1: { fontSize: 26, fontWeight: '700' as const, color: '#111827', letterSpacing: -0.3 },
+  h2: { fontSize: 20, fontWeight: '600' as const, color: '#111827', letterSpacing: -0.2 },
+  h3: { fontSize: 17, fontWeight: '600' as const, color: '#111827' },
+  body: { fontSize: 15, fontWeight: '400' as const, color: '#111827' },
+  bodySmall: { fontSize: 13, fontWeight: '400' as const, color: '#6B7280' },
+  caption: { fontSize: 11, fontWeight: '400' as const, color: '#9CA3AF' },
+  button: { fontSize: 15, fontWeight: '600' as const, letterSpacing: 0.2 },
 };
 
-// Glassmorphism card styles for reuse
+// Clean square card styles
 export const glassCard = {
-  backgroundColor: colors.glass,
-  borderRadius: radius.xl,
+  backgroundColor: colors.surface,
+  borderRadius: 0,
   borderWidth: 1,
-  borderColor: colors.glassBorder,
-  ...shadow.md,
+  borderColor: colors.border,
+  ...shadow.sm,
 };
 
 export const glassCardLight = {
-  backgroundColor: colors.glassLight,
-  borderRadius: radius.lg,
+  backgroundColor: colors.surface,
+  borderRadius: 0,
   borderWidth: 1,
   borderColor: colors.borderLight,
 };

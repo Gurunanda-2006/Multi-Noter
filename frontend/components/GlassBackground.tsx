@@ -1,35 +1,25 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, View, Platform } from 'react-native';
-
-const bgImage = require('../assets/background.jpg');
+import { StyleSheet, View } from 'react-native';
+import { colors } from './design/theme';
 
 interface Props {
   children: React.ReactNode;
   overlay?: boolean;
 }
 
-export function GlassBackground({ children, overlay = true }: Props) {
+export function GlassBackground({ children }: Props) {
   return (
-    <ImageBackground
-      source={bgImage}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      {overlay && <View style={styles.overlay} />}
+    <View style={styles.container}>
       {children}
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  container: {
     flex: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: '#0a100d',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(5, 10, 8, 0.55)',
+    backgroundColor: colors.background,
   },
 });

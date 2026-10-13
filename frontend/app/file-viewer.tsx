@@ -144,22 +144,21 @@ export default function FileViewerScreen() {
   const isImage = mimeType.startsWith('image/');
 
   return (
-    <GlassBackground>
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.headerBtn}>
-            <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.headerBtn}>
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle} numberOfLines={1}>{name}</Text>
+        <View style={styles.headerRightActions}>
+          <TouchableOpacity onPress={handleShare} hitSlop={8} style={styles.headerBtn}>
+            <Ionicons name="share-outline" size={20} color={colors.accent} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle} numberOfLines={1}>{name}</Text>
-          <View style={styles.headerRightActions}>
-            <TouchableOpacity onPress={handleShare} hitSlop={8} style={styles.headerBtn}>
-              <Ionicons name="share-outline" size={20} color={colors.info} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleOpenInDrive} hitSlop={8} style={styles.headerBtn}>
-              <Ionicons name="open-outline" size={20} color={colors.accent} />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={handleOpenInDrive} hitSlop={8} style={styles.headerBtn}>
+            <Ionicons name="open-outline" size={20} color={colors.accent} />
+          </TouchableOpacity>
         </View>
+      </View>
 
         <ScrollView
           style={styles.scroll}
@@ -266,73 +265,72 @@ export default function FileViewerScreen() {
           onCancel={() => setShowDeleteConfirm(false)}
         />
       </SafeAreaView>
-    </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: 'transparent' },
+  safe: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+    borderBottomColor: colors.border,
   },
   headerBtn: {
     width: 36,
     height: 36,
-    borderRadius: radius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 0,
+    backgroundColor: colors.borderLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { ...typography.h3, flex: 1, marginHorizontal: spacing.sm },
+  headerTitle: { ...typography.h3, flex: 1, marginHorizontal: spacing.sm, color: colors.textPrimary },
   headerRightActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 60 },
   imagePreviewWrap: {
     width: '100%',
     height: 300,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: colors.border,
   },
   imagePreview: { width: '100%', height: '100%' },
   textContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: colors.surface,
     padding: spacing.base,
-    borderRadius: radius.xl,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: colors.border,
   },
-  textContent: { ...typography.body, lineHeight: 22 },
+  textContent: { ...typography.body, lineHeight: 22, color: colors.textPrimary },
   defaultPreviewWrap: {
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: colors.border,
     padding: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.md,
   },
-  previewNotice: { ...typography.bodySmall, textAlign: 'center', maxWidth: 300 },
+  previewNotice: { ...typography.bodySmall, textAlign: 'center', maxWidth: 300, color: colors.textSecondary },
   detailsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: colors.border,
     padding: spacing.base,
     gap: spacing.md,
     ...shadow.sm,
   },
-  cardTitle: { ...typography.h3 },
+  cardTitle: { ...typography.h3, color: colors.textPrimary },
   detailRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
   detailLabel: { ...typography.bodySmall, color: colors.textSecondary },
   detailValue: { ...typography.bodySmall, fontWeight: '500', flexShrink: 1, textAlign: 'right', color: colors.textPrimary },
@@ -342,20 +340,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.accent,
-    borderRadius: radius.xl,
+    borderRadius: 0,
     paddingVertical: spacing.md,
     gap: spacing.sm,
-    ...shadow.glow,
+    ...shadow.sm,
   },
-  primaryActionText: { ...typography.button, color: '#000000', fontWeight: '700' },
+  primaryActionText: { ...typography.button, color: '#FFFFFF', fontWeight: '700' },
   secondaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.14)',
+    borderColor: colors.border,
     paddingVertical: spacing.md,
     gap: spacing.sm,
   },

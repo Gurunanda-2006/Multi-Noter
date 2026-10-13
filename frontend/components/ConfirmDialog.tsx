@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radius, spacing, typography, shadow } from './design/theme';
+import { colors, spacing, typography, shadow } from './design/theme';
 
 interface Props {
   visible: boolean;
@@ -63,16 +63,16 @@ export function ConfirmDialog({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: colors.overlayHeavy,
+    backgroundColor: colors.overlay,
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.xl,
   },
   card: {
-    backgroundColor: 'rgba(30, 30, 30, 0.95)',
-    borderRadius: radius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
+    borderColor: colors.border,
     padding: spacing.xl,
     width: '100%',
     maxWidth: 380,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 56,
     height: 56,
-    borderRadius: radius.full,
+    borderRadius: 0,
     backgroundColor: colors.accentLight,
     alignItems: 'center',
     justifyContent: 'center',
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.h3,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   message: {
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
   cancelBtn: {
     flex: 1,
     paddingVertical: spacing.md,
-    borderRadius: radius.lg,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 0,
+    backgroundColor: colors.borderLight,
     alignItems: 'center',
   },
   cancelText: {
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
   confirmBtn: {
     flex: 1,
     paddingVertical: spacing.md,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     backgroundColor: colors.accent,
     alignItems: 'center',
   },

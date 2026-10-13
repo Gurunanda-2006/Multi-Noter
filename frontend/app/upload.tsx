@@ -239,15 +239,14 @@ export default function UploadScreen() {
   };
 
   return (
-    <GlassBackground>
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Upload Files</Text>
-          <View style={{ width: 36 }} />
-        </View>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Upload Files</Text>
+        <View style={{ width: 36 }} />
+      </View>
 
         <ScrollView
           style={styles.scroll}
@@ -322,31 +321,30 @@ export default function UploadScreen() {
           )}
         </ScrollView>
       </SafeAreaView>
-    </GlassBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: 'transparent' },
+  safe: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+    borderBottomColor: colors.border,
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: radius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 0,
+    backgroundColor: colors.borderLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { ...typography.h3 },
+  headerTitle: { ...typography.h3, color: colors.textPrimary },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 60 },
   subtitle: { ...typography.bodySmall, color: colors.textSecondary },
@@ -354,10 +352,10 @@ const styles = StyleSheet.create({
   pickerButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.14)',
+    borderColor: colors.border,
     padding: spacing.base,
     gap: spacing.base,
     ...shadow.sm,
@@ -365,12 +363,12 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 52,
     height: 52,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
   },
   pickerTextWrap: { flex: 1, gap: 2 },
-  pickerButtonTitle: { ...typography.body, fontWeight: '600' },
+  pickerButtonTitle: { ...typography.body, fontWeight: '600', color: colors.textPrimary },
   pickerButtonSub: { ...typography.caption, color: colors.textSecondary },
   tasksSection: { marginTop: spacing.md, gap: spacing.md },
   tasksHeader: {
@@ -378,7 +376,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  tasksTitle: { ...typography.h3 },
+  tasksTitle: { ...typography.h3, color: colors.textPrimary },
   clearText: { ...typography.bodySmall, color: colors.accent, fontWeight: '600' },
   tasksList: { gap: spacing.sm },
 });

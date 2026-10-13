@@ -89,17 +89,17 @@ export default function VideosScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: 'transparent' },
+  safe: { flex: 1, backgroundColor: colors.background },
   header: {
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+    borderBottomColor: colors.border,
   },
-  title: { ...typography.h2 },
+  title: { ...typography.h2, color: colors.textPrimary },
   listContent: {
     padding: spacing.base,
-    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
+    paddingBottom: 40,
   },
 });

@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -24,7 +23,7 @@ import { categoryLabel, categoryIcon } from '../../utils/mime';
 import { formatFileSize } from '../../utils/filename';
 import { downloadFileToDevice } from '../../services/files/downloadService';
 import { shareFile } from '../../services/files/shareService';
-import { colors, radius, shadow, spacing, typography } from '../../components/design/theme';
+import { colors, shadow, spacing, typography } from '../../components/design/theme';
 
 const CATEGORIES: FileCategory[] = ['text-notes', 'pdfs', 'word-documents', 'images', 'videos', 'other'];
 
@@ -162,10 +161,10 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={[styles.actionBtn, { flex: 1 }]}
                 onPress={() => router.push('/note-editor')}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
-                <View style={[styles.actionIconWrap, { backgroundColor: 'rgba(129, 140, 248, 0.15)' }]}>
-                  <Ionicons name="pencil-outline" size={22} color="#818CF8" />
+                <View style={[styles.actionIconWrap, { backgroundColor: colors.accentLight }]}>
+                  <Ionicons name="pencil-outline" size={22} color={colors.accent} />
                 </View>
                 <Text style={styles.actionLabel}>Save Text</Text>
                 <Text style={styles.actionSub}>Write a plain-text note</Text>
@@ -174,9 +173,9 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={[styles.actionBtn, { flex: 1 }]}
                 onPress={() => router.push('/upload')}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
-                <View style={[styles.actionIconWrap, { backgroundColor: 'rgba(52, 211, 153, 0.15)' }]}>
+                <View style={[styles.actionIconWrap, { backgroundColor: '#FFF7ED' }]}>
                   <Ionicons name="cloud-upload-outline" size={22} color={colors.accent} />
                 </View>
                 <Text style={styles.actionLabel}>Upload Files</Text>
@@ -194,11 +193,11 @@ export default function HomeScreen() {
                       key={cat}
                       style={styles.categoryCard}
                       onPress={() => handleCategoryPress(cat)}
-                      activeOpacity={0.8}
+                      activeOpacity={0.85}
                     >
                       <Ionicons
                         name={categoryIcon(cat) as any}
-                        size={20}
+                        size={22}
                         color={colors.accent}
                       />
                       <Text style={styles.categoryLabel}>{categoryLabel(cat)}</Text>
@@ -270,67 +269,68 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: 'transparent' },
+  safe: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.md,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+    borderBottomColor: colors.border,
   },
   headerLeft: { gap: 4, flex: 1 },
   appNameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   headerLogo: {
     width: 28,
     height: 28,
-    borderRadius: radius.md,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(52, 211, 153, 0.4)',
+    borderColor: colors.accent,
   },
   appName: { ...typography.h2, fontSize: 18 },
   driveStatus: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  dot: { width: 8, height: 8, borderRadius: 4 },
+  dot: { width: 8, height: 8, borderRadius: 0 },
   dotGreen: { backgroundColor: colors.success },
   dotOrange: { backgroundColor: colors.warning },
-  driveStatusText: { ...typography.caption },
+  driveStatusText: { ...typography.caption, color: colors.textSecondary },
   avatar: {
     width: 38,
     height: 38,
-    borderRadius: radius.full,
-    backgroundColor: 'rgba(52, 211, 153, 0.2)',
-    borderWidth: 1.5,
-    borderColor: colors.accent,
+    borderRadius: 0,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: spacing.md,
   },
-  avatarText: { color: colors.accent, fontWeight: '700', fontSize: 16 },
+  avatarText: { color: '#FFFFFF', fontWeight: '700', fontSize: 16 },
   scroll: { flex: 1 },
-  scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: Platform.OS === 'ios' ? 100 : 80 },
+  scrollContent: { padding: spacing.base, gap: spacing.base, paddingBottom: 40 },
   actions: { flexDirection: 'row', gap: spacing.md },
   actionBtn: {
-    backgroundColor: 'rgba(20, 30, 25, 0.75)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.18)',
+    borderColor: colors.border,
     padding: spacing.base,
     gap: spacing.xs,
+    ...shadow.sm,
   },
   actionIconWrap: {
     width: 42,
     height: 42,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#FED7AA',
   },
-  actionLabel: { ...typography.h3, marginTop: spacing.xs, fontSize: 15, color: '#FFFFFF' },
-  actionSub: { ...typography.bodySmall, fontSize: 12, color: 'rgba(255, 255, 255, 0.7)' },
+  actionLabel: { ...typography.h3, marginTop: spacing.xs, fontSize: 15, color: colors.textPrimary },
+  actionSub: { ...typography.bodySmall, fontSize: 12, color: colors.textSecondary },
   section: { gap: spacing.md },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sectionTitle: { ...typography.h3, color: '#FFFFFF' },
+  sectionTitle: { ...typography.h3, color: colors.textPrimary },
   seeAll: { ...typography.bodySmall, color: colors.accent, fontWeight: '600' },
   categoryGrid: {
     flexDirection: 'row',
@@ -339,39 +339,41 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '31%',
-    backgroundColor: 'rgba(20, 30, 25, 0.75)',
-    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.16)',
+    borderColor: colors.border,
     padding: spacing.md,
     gap: spacing.xs,
     alignItems: 'flex-start',
+    ...shadow.sm,
   },
-  categoryLabel: { ...typography.caption, fontWeight: '600', color: 'rgba(255, 255, 255, 0.8)', fontSize: 11 },
-  categoryCount: { ...typography.h3, color: '#FFFFFF' },
+  categoryLabel: { ...typography.caption, fontWeight: '600', color: colors.textSecondary, fontSize: 11 },
+  categoryCount: { ...typography.h3, color: colors.textPrimary },
   statsRow: { flexDirection: 'row', gap: spacing.md },
   statBox: {
     flex: 1,
-    backgroundColor: 'rgba(20, 30, 25, 0.75)',
-    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.16)',
+    borderColor: colors.border,
     padding: spacing.base,
     alignItems: 'center',
     gap: spacing.xs,
+    ...shadow.sm,
   },
   statValue: { ...typography.h2, color: colors.accent },
-  statLabel: { ...typography.caption, color: 'rgba(255, 255, 255, 0.7)' },
+  statLabel: { ...typography.caption, color: colors.textSecondary },
   itemList: { gap: spacing.sm },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     backgroundColor: colors.dangerLight,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(248, 113, 113, 0.3)',
+    borderColor: colors.danger,
   },
   errorText: { ...typography.bodySmall, color: colors.danger, flex: 1 },
 });

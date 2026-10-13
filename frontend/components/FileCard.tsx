@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StorageItem } from '../types';
 import { categoryIcon } from '../utils/mime';
 import { formatDate, formatFileSize } from '../utils/filename';
-import { colors, radius, spacing, typography, glassCard } from './design/theme';
+import { colors, radius, shadow, spacing, typography } from './design/theme';
 
 interface Props {
   item: StorageItem;
@@ -45,26 +45,26 @@ export function FileCard({
           hitSlop={8}
           activeOpacity={0.7}
         >
-          <View style={[styles.checkbox, isSelected && styles.checkboxActive]}>
-            {isSelected && (
-              <Ionicons name="checkmark" size={14} color="#FFF" />
-            )}
-          </View>
+          <Ionicons
+            name={isSelected ? 'checkbox' : 'square-outline'}
+            size={22}
+            color={isSelected ? colors.accent : colors.textDisabled}
+          />
         </TouchableOpacity>
       ) : null}
 
-      {/* Main content */}
+      {/* Main card content */}
       <TouchableOpacity
         style={styles.contentWrap}
         onPress={() => onPress(item)}
-        activeOpacity={0.7}
+        activeOpacity={0.8}
       >
         <View style={styles.preview}>
           {showThumbnail ? (
             <Image source={{ uri: item.thumbnailLink! }} style={styles.thumbnail} />
           ) : (
             <View style={[styles.iconContainer, { backgroundColor: categoryBgColor(item.category) }]}>
-              <Ionicons name={categoryIcon(item.category) as any} size={24} color={categoryFgColor(item.category)} />
+              <Ionicons name={categoryIcon(item.category) as any} size={26} color={categoryFgColor(item.category)} />
             </View>
           )}
         </View>
@@ -81,7 +81,7 @@ export function FileCard({
         </View>
       </TouchableOpacity>
 
-      {/* Right-side actions: Share, Download, Delete */}
+      {/* Right-side actions: Share, Download, Delete, Menu */}
       <View style={styles.rightActionWrap}>
         {onSharePress ? (
           <TouchableOpacity
@@ -90,7 +90,7 @@ export function FileCard({
             activeOpacity={0.7}
             hitSlop={6}
           >
-            <Ionicons name="share-outline" size={18} color={colors.info} />
+            <Ionicons name="share-outline" size={18} color={colors.accent} />
           </TouchableOpacity>
         ) : null}
 
@@ -112,10 +112,11 @@ export function FileCard({
             activeOpacity={0.8}
           >
             <Ionicons name="trash-outline" size={14} color="#FFFFFF" />
+            <Text style={styles.deleteBtnText}>Delete</Text>
           </TouchableOpacity>
         ) : onMenuPress ? (
           <TouchableOpacity onPress={() => onMenuPress(item)} hitSlop={8} style={styles.menu}>
-            <Ionicons name="ellipsis-vertical" size={16} color={colors.textSecondary} />
+            <Ionicons name="ellipsis-vertical" size={18} color={colors.textSecondary} />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -125,58 +126,46 @@ export function FileCard({
 
 function categoryBgColor(cat: StorageItem['category']): string {
   const map: Record<string, string> = {
-    'text-notes': 'rgba(99, 102, 241, 0.2)',
-    pdfs: 'rgba(248, 113, 113, 0.2)',
-    'word-documents': 'rgba(96, 165, 250, 0.2)',
-    images: 'rgba(52, 211, 153, 0.2)',
-    videos: 'rgba(168, 85, 247, 0.2)',
-    other: 'rgba(251, 191, 36, 0.2)',
+    'text-notes': '#FFF7ED',
+    pdfs: '#FEF2F2',
+    'word-documents': '#EFF6FF',
+    images: '#F0FDF4',
+    videos: '#FAF5FF',
+    other: '#FFFBEB',
   };
-  return map[cat] ?? 'rgba(255, 255, 255, 0.1)';
+  return map[cat] ?? '#F3F4F6';
 }
 
 function categoryFgColor(cat: StorageItem['category']): string {
   const map: Record<string, string> = {
-    'text-notes': '#818CF8',
-    pdfs: '#F87171',
-    'word-documents': '#60A5FA',
-    images: '#34D399',
-    videos: '#A78BFA',
-    other: '#FBBF24',
+    'text-notes': '#EA580C',
+    pdfs: '#EF4444',
+    'word-documents': '#3B82F6',
+    images: '#16A34A',
+    videos: '#9333EA',
+    other: '#D97706',
   };
-  return map[cat] ?? colors.textSecondary;
+  return map[cat] ?? '#6B7280';
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'rgba(20, 30, 25, 0.78)',
-    borderRadius: radius.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.16)',
+    borderColor: colors.border,
     padding: spacing.base,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
+    ...shadow.sm,
   },
   cardSelected: {
     borderColor: colors.accent,
-    backgroundColor: 'rgba(52, 211, 153, 0.15)',
+    backgroundColor: colors.accentLight,
   },
   selectBtn: {
     padding: 2,
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 7,
-    borderWidth: 2,
-    borderColor: colors.textDisabled,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxActive: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
   },
   contentWrap: {
     flex: 1,
@@ -185,19 +174,19 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   preview: {
-    width: 46,
-    height: 46,
+    width: 48,
+    height: 48,
     flexShrink: 0,
   },
   thumbnail: {
-    width: 46,
-    height: 46,
-    borderRadius: radius.md,
+    width: 48,
+    height: 48,
+    borderRadius: 0,
   },
   iconContainer: {
-    width: 46,
-    height: 46,
-    borderRadius: radius.md,
+    width: 48,
+    height: 48,
+    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -208,11 +197,11 @@ const styles = StyleSheet.create({
   name: {
     ...typography.body,
     fontWeight: '600',
-    fontSize: 14,
+    color: colors.textPrimary,
   },
   previewText: {
     ...typography.bodySmall,
-    fontSize: 12,
+    color: colors.textSecondary,
   },
   meta: {
     flexDirection: 'row',
@@ -221,7 +210,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...typography.caption,
-    fontSize: 10,
+    color: colors.textSecondary,
   },
   rightActionWrap: {
     flexDirection: 'row',
@@ -231,18 +220,26 @@ const styles = StyleSheet.create({
   actionBtn: {
     width: 32,
     height: 32,
-    borderRadius: radius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 0,
+    backgroundColor: colors.accentLight,
+    borderWidth: 1,
+    borderColor: '#FED7AA',
     alignItems: 'center',
     justifyContent: 'center',
   },
   deleteBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.full,
-    backgroundColor: colors.danger,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 4,
+    backgroundColor: colors.danger,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: 0,
+  },
+  deleteBtnText: {
+    ...typography.caption,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   menu: {
     padding: 4,

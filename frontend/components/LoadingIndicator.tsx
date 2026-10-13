@@ -26,10 +26,11 @@ const styles = StyleSheet.create({
   },
   fullScreen: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: colors.background,
   },
   message: {
     ...typography.bodySmall,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radius, spacing, typography } from './design/theme';
+import { colors, spacing, typography } from './design/theme';
 
 interface Props {
   value: string;
@@ -38,10 +38,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(20, 30, 25, 0.8)',
-    borderRadius: radius.full,
+    backgroundColor: colors.surface,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.18)',
+    borderColor: colors.border,
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.sm + 2,
     gap: spacing.sm,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     ...typography.body,
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     padding: 0,
     margin: 0,
   },
