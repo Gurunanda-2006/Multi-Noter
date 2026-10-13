@@ -32,63 +32,65 @@ export default function LoginScreen() {
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.logoArea}>
-          <View style={styles.logoCircle}>
-            <Image
-              source={require('../../assets/logo.png')}
-              style={styles.logoImage}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.appName}>Personal Storage Hub</Text>
-          <Text style={styles.tagline}>Your central hub for personal notes & files</Text>
-        </View>
-
-        <View style={styles.features}>
-          {[
-            { icon: 'document-text-outline', label: 'Write & store plain text notes (.txt)' },
-            { icon: 'cloud-upload-outline', label: 'Upload PDFs, Word docs, photos & videos' },
-            { icon: 'folder-outline', label: 'Organized inside dedicated Drive folders' },
-            { icon: 'search-outline', label: 'Instant search, preview, and trash management' },
-            { icon: 'shield-checkmark-outline', label: 'Private & direct: no external database' },
-          ].map((f) => (
-            <View key={f.icon} style={styles.featureRow}>
-              <View style={styles.featureIcon}>
-                <Ionicons name={f.icon as any} size={18} color={colors.accent} />
-              </View>
-              <Text style={styles.featureText}>{f.label}</Text>
+        <View style={styles.glassContainer}>
+          <View style={styles.logoArea}>
+            <View style={styles.logoCircle}>
+              <Image
+                source={require('../../assets/logo.png')}
+                style={styles.logoImage}
+                resizeMode="cover"
+              />
             </View>
-          ))}
-        </View>
-
-        {error ? (
-          <View style={styles.errorBox}>
-            <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={styles.appName}>Personal Storage Hub</Text>
+            <Text style={styles.tagline}>Your central hub for personal notes & files</Text>
           </View>
-        ) : null}
 
-        <TouchableOpacity
-          style={styles.signInBtn}
-          onPress={signIn}
-          activeOpacity={0.85}
-          disabled={isLoading}
-        >
-          <View style={styles.googleIcon}>
-            <Text style={styles.googleG}>G</Text>
+          <View style={styles.features}>
+            {[
+              { icon: 'document-text-outline', label: 'Write & store plain text notes (.txt)' },
+              { icon: 'cloud-upload-outline', label: 'Upload PDFs, Word docs, photos & videos' },
+              { icon: 'folder-outline', label: 'Organized inside dedicated Drive folders' },
+              { icon: 'search-outline', label: 'Instant search, preview, and trash management' },
+              { icon: 'shield-checkmark-outline', label: 'Private & direct: no external database' },
+            ].map((f) => (
+              <View key={f.icon} style={styles.featureRow}>
+                <View style={styles.featureIcon}>
+                  <Ionicons name={f.icon as any} size={18} color={colors.accent} />
+                </View>
+                <Text style={styles.featureText}>{f.label}</Text>
+              </View>
+            ))}
           </View>
-          <Text style={styles.signInText}>Connect Google Drive</Text>
-        </TouchableOpacity>
 
-        <Text style={styles.disclaimer}>
-          Personal Storage Hub requests only the minimal drive.file scope needed to manage its own folder. It never touches or modifies any other files in your Drive.
-        </Text>
+          {error ? (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
 
-        {Platform.OS !== 'web' ? (
-          <Text style={styles.platformNote}>
-            On mobile, run via an Expo development build for custom OAuth redirect handling.
+          <TouchableOpacity
+            style={styles.signInBtn}
+            onPress={signIn}
+            activeOpacity={0.85}
+            disabled={isLoading}
+          >
+            <View style={styles.googleIcon}>
+              <Text style={styles.googleG}>G</Text>
+            </View>
+            <Text style={styles.signInText}>Connect Google Drive</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.disclaimer}>
+            Personal Storage Hub requests only the minimal drive.file scope needed to manage its own folder. It never touches or modifies any other files in your Drive.
           </Text>
-        ) : null}
+
+          {Platform.OS !== 'web' ? (
+            <Text style={styles.platformNote}>
+              On mobile, run via an Expo development build for custom OAuth redirect handling.
+            </Text>
+          ) : null}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -98,10 +100,21 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: 'transparent' },
   scroll: {
     flexGrow: 1,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xxl,
-    gap: spacing.xl,
+    paddingHorizontal: spacing.base,
+    paddingVertical: spacing.xl,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  glassContainer: {
+    width: '100%',
+    maxWidth: 480,
+    backgroundColor: 'rgba(15, 23, 20, 0.85)',
+    borderRadius: radius.xxl,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    padding: spacing.xl,
+    gap: spacing.xl,
+    ...shadow.lg,
   },
   logoArea: { alignItems: 'center', gap: spacing.md },
   logoCircle: {
